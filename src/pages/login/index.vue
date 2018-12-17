@@ -7,8 +7,7 @@
       ll: "123"
     },
     created() {
-      wx.hideTabBar({})
-      console.log("app created and cache logs by setStorageSync");
+      
     },
   }
 

@@ -1,25 +1,38 @@
 {
     "pages": [
+      "pages/home/main",
+      "pages/home/orderDetail/main",
+
+      "pages/mine/main",
+      "pages/mine/mineSetting/main",
+      "pages/mine/mineSetting/changePassword/main",
+      "pages/mine/mineSetting/changePhone/main",
+      
+      
       "pages/login/main"
     ],
     "window": {
       "backgroundTextStyle": "light",
-      "navigationBarBackgroundColor": "#fff",
-      "navigationBarTitleText": "WeChat",
+      "navigationBarBackgroundColor": "#F5D085",
+      "navigationBarTitleText": "智享家",
       "navigationBarTextStyle": "black"
     },
     "tabBar": {
-      "color": "#999",
-      "selectedColor": "#000",
-      "backgroundColor": "#fff",
+      "color": "#C5C5C7",
+      "selectedColor": "#4D3D33",
+      "backgroundColor": "#FFFFFF",
       "borderStyle": "black",
       "list": [{
-          "pagePath": "pages/login/main",
-          "text": "首页"
+          "pagePath": "pages/home/main",
+          "text": "首页",
+          "iconPath": "static/images/mainPage/homePageUnSecected-icon.png",
+          "selectedIconPath": "static/images/mainPage/homePageSecected-icon.png"
         },
         {
-          "pagePath": "pages/login/main",
-          "text": "我的"
+          "pagePath": "pages/mine/main",
+          "text": "我的",
+          "iconPath": "static/images/mainPage/mineUnSelect-icon.png",
+          "selectedIconPath": "static/images/mainPage/mineSelect-icon.png"
         }
       ]
     }
