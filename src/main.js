@@ -7,10 +7,12 @@ import App from './App'
 Vue.config.productionTip = false
 App.mpType = 'app'
 // Vue.prototype.util = util
-const app = new Vue({
-//   store,
-//   ...App
-    App
-})
+const app = new Vue(
+//     {
+//     store,
+//     ...App
+
+//   }
+  App)
 
 app.$mount()
