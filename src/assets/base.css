@@ -9,7 +9,7 @@ button::after {
   border: none;
 }
 .sendCode{  /*发送验证码按钮样式*/
-  width: 215rpx;
+  
   height: 65rpx;
   background-color: #F5D085;
   border-radius:10rpx;
@@ -35,3 +35,4 @@ button::after {
   background:rgba(245,208,133,1);
   box-shadow:0rpx 10rpx 12rpx 0px rgba(245,208,133,0.69);
 }
+

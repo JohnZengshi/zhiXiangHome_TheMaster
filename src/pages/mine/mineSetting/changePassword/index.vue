@@ -2,21 +2,43 @@
   <div class="changePasswordPage">
     <ul>
       <li>
-        <input type="text" placeholder="请输入旧密码" placeholder-class="placeholderClass001">
+        <input v-model="oldPassword" :password="true" type="text" placeholder="请输入旧密码" placeholder-class="placeholderClass001">
       </li>
       <li>
-        <input type="text" placeholder="请输入新密码" placeholder-class="placeholderClass001">
+        <input v-model="newPassword" :password="true" type="text" placeholder="请输入新密码" placeholder-class="placeholderClass001">
       </li>
       <li>
-        <input type="text" placeholder="请再次输入新密码" placeholder-class="placeholderClass001">
+        <input v-model="_newPassword" :password="true" type="text" placeholder="请再次输入新密码" placeholder-class="placeholderClass001">
       </li>
     </ul>
-    <button class="confirmBtn">确定</button>
+    <button @click="confirm" class="confirmBtn">确定</button>
   </div>
 </template>
 <script>
+  import {toast} from "@/utils/wxapi";
   export default {
+    data(){
+      return {
+        oldPassword: "",
+        newPassword: "",
+        _newPassword: "",
+      }
+    },
+    methods:{
+      confirm(){
+        if(this.oldPassword == ''){
+          toast("旧密码不能为空")
+        }else if(this.newPassword == ''){
+          toast("新密码不能为空")  
+        }else if(this._newPassword == ''){
+          toast("请再次输入新密码")
+        }else if(this.newPassword != this._newPassword){
+          toast("两次输入的新密码不一样")
+        }else{
 
+        }
+      }
+    }
   }
 
 </script>
