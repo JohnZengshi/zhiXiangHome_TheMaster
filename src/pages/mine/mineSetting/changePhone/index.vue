@@ -2,19 +2,47 @@
   <div class="changePhonePage">
     <ul>
       <li class="display_flex justify-content_flex-justify align-items_center">
-        <input type="text" placeholder="请输入手机号" placeholder-class="placeholderClass001">
-        <button class="sendCode">发送验证码</button>
+        <input v-model="phone" type="text" placeholder="请输入手机号" placeholder-class="placeholderClass001">
+        <SendCode
+          @getSendCode="getSendCode"
+          :phoneNum="phone"></SendCode>
       </li>
       <li>
-        <input type="text" placeholder="请输入验证码" placeholder-class="placeholderClass001">
+        <input v-model="code" type="text" placeholder="请输入验证码" placeholder-class="placeholderClass001">
       </li>
     </ul>
-    <button class="confirmBtn">确定更换</button>
+    <button @click="confirm" class="confirmBtn">确定更换</button>
   </div>
 </template>
 <script>
+  import {navigateTo,toast} from "@/utils/wxapi.js";
+  import {RegExpr} from "@/utils/regex.js"
+  import SendCode from "@/components/sendCode.vue";
   export default {
+    data(){
+      return {
+        phone: "",
+        code: "",
+      }
+    },
+    components:{
+      SendCode,
+    },
+    methods:{
+      getSendCode(){
 
+      },
+      confirm(){
+        let isPhone = RegExpr.checkMobile(this.phone)
+        if(!isPhone){
+          toast("请输入正确的手机号")
+        }else if(this.code == ''){
+          toast("验证码不能为空")
+        }else{
+          console.log("输入无误")
+        }
+      }
+    }
   }
 
 </script>

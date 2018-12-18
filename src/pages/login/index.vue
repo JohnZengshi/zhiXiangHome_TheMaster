@@ -5,12 +5,12 @@
     </div>
     <div class="phone display_flex align-items_center">
       <img src="/static/images/loginPage/account-icon.png" alt="">
-      <input type="number" placeholder="请输入手机号" placeholder-class="placeholderClass001">
+      <input v-model="phone" type="number" placeholder="请输入手机号" placeholder-class="placeholderClass001">
     </div>
     <div class="passworde display_flex align-items_center justify-content_flex-justify">
       <div class="display_flex align-items_center">
         <img src="/static/images/loginPage/password-icon.png" alt="">
-        <input type="text" :password="hidePassword" placeholder="请输入密码" placeholder-class="placeholderClass001">
+        <input v-model="password"  type="text" :password="hidePassword" placeholder="请输入密码" placeholder-class="placeholderClass001">
       </div>
       <div class="display_flex align-items_center">
         <img v-if="hidePassword" @click="switchHidePassword" src="/static/images/loginPage/hide-icon.png" alt="">
@@ -31,12 +31,18 @@
   import {
     navigateTo,
     redirectTo,
-    switchTab
-  } from "@/utils/wxapi.js"
+    switchTab,
+    toast
+  } from "@/utils/wxapi.js";
+  import {
+    RegExpr
+  } from "@/utils/regex.js";
   export default {
     data() {
       return {
-        hidePassword: true,
+        phone: "", //输入的手机号
+        password: "", //输入的密码
+        hidePassword: true, //隐藏显示密码
       }
     },
     methods:{
@@ -44,8 +50,15 @@
         this.hidePassword = !this.hidePassword;
       },
       login(){ //登录
-        // 假设登录成功
-        switchTab("/pages/mine/main");
+        let isPhone = RegExpr.checkMobile(this.phone);
+        let passwordRight = this.password != '';
+        if(isPhone && passwordRight){ //输入无误
+          console.log("输入无误")
+          // 假设登录成功
+          switchTab("/pages/mine/main");
+        }else{
+          toast("手机号不正确或密码为空");
+        }
       }
     },
     created() {

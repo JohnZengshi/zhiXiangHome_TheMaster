@@ -2,13 +2,18 @@
   <div class="minePage">
     <div class="userVia display_flex flex-direction_column align-items_center justify-content_flex-justify">
       <div class="via display_flex flex-direction_column justify-content_flex-center align-items_center">
-        <!-- <img src="" alt=""> -->
+        <div>
+          <open-data type="userAvatarUrl"></open-data>
+        </div>
       </div>
-      <span class="name">用户名</span>
+      <span class="name">
+        <open-data type="userNickName"></open-data>
+      </span>
+      
     </div>
     <div class="menuList">
       <ul>
-        <li class="display_flex justify-content_flex-justify align-items_center">
+        <li @click="concentKF" class="display_flex justify-content_flex-justify align-items_center">
           <div class="display_flex align-items_center">
             <img src="/static/images/mainPage/contactCustomerService-icon.png" alt="">
             <span>联系客服</span>
@@ -43,9 +48,13 @@
   </div>
 </template>
 <script>
-  import {login} from "@/utils/wxapi";
+  import {login,makePhoneCall} from "@/utils/wxapi";
   export default {
-    
+    methods:{
+      concentKF(){
+        makePhoneCall("400-2365-5698")
+      }
+    }
   }
 
 </script>
@@ -66,12 +75,14 @@
         border-radius: 50%;
         background-color: rgba(78, 62, 51, 0.2);
         margin-top: 32rpx;
+        overflow: hidden;
 
-        >img {
+        >div {
           width: 240rpx;
           height: 240rpx;
           background-color: #fff;
           border-radius: 50%;
+          overflow: hidden;
         }
       }
 

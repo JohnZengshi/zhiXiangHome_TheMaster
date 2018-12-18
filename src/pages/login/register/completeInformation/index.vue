@@ -49,7 +49,8 @@
       chooseImage,
       actionSheet,
       showModal,
-      redirectTo
+      redirectTo,
+      reLaunch
     } from "@/utils/wxapi.js";
     export default {
       data() {
@@ -74,7 +75,7 @@
             let showModalRES = await showModal("提交成功", "提交成功，我们尽快为您审核", false);
             console.log(showModalRES);
             if(showModalRES == 'ok'){
-                redirectTo("/pages/login/register/main")
+                reLaunch("/pages/login/main")
             }
           })()
         }

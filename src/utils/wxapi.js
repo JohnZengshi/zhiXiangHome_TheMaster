@@ -443,6 +443,17 @@ const checkSession = () => new Promise((resolve, reject) => {
   })
 })
 
+const makePhoneCall = (phoneNumber) => new Promise((resolve,reject) => {
+  wx.makePhoneCall({
+    phoneNumber: phoneNumber,
+    success: function () {
+      resolve(true)
+    },
+    fail: function () {
+      resolve(false)
+    }
+  })
+})
 export {
   getStorage,
   setStorage,
@@ -473,5 +484,6 @@ export {
   toastSuccess,
   actionSheet,
   saveImage,
-  checkSession
+  checkSession,
+  makePhoneCall
 }
