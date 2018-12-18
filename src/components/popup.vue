@@ -23,6 +23,8 @@
     <div v-else-if="popType == '2'" class="del">
         
     </div>
+    <!-- 确定 -->
+    
   </div>
 </template>
 <script>
