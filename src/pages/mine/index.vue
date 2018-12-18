@@ -43,8 +43,9 @@
   </div>
 </template>
 <script>
+  import {login} from "@/utils/wxapi";
   export default {
-
+    
   }
 
 </script>

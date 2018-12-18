@@ -257,6 +257,17 @@ const redirectTo = url => {
   })
 }
 
+const switchTab = url => {
+  wx.switchTab({
+    url: url
+  })
+}
+
+const reLaunch = url => {
+  wx.reLaunch({
+    url: url
+  })
+}
 const startPullDownRefresh = () => new Promise((resolve, reject) => {
   wx.startPullDownRefresh({
     success(res) {
@@ -449,6 +460,8 @@ export {
   alert,
   navigateTo,
   redirectTo,
+  switchTab,
+  reLaunch,
   startPullDownRefresh,
   stopPullDownRefresh,
   uploadFile,
