@@ -1,7 +1,7 @@
 {
     "pages": [
       "pages/home/main",
-      "pages/home/orderDetail/main",
+      "pages/home/orderDetail/main",      
 
       "pages/mine/main",
       "pages/mine/mineSetting/main",
