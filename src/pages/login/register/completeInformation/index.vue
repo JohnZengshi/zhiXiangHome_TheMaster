@@ -5,21 +5,21 @@
             <span class="line"></span>
             <span class="title">服务商编号</span>
         </div>
-        <input type="text" placeholder="请输入服务商编号" placeholder-class="placeholderClass001">
+        <input v-model="serviceProviderNumber" type="text" placeholder="请输入服务商编号" placeholder-class="placeholderClass001">
     </div>
     <div class="name display_flex justify-content_flex-justify align-items_center">
         <div class="display_flex align-items_center">
             <span class="line"></span>
             <span class="title">姓名</span>
         </div>
-        <input type="text" placeholder="请输入姓名" placeholder-class="placeholderClass001">
+        <input v-model="userName" type="text" placeholder="请输入姓名" placeholder-class="placeholderClass001">
     </div>
     <div class="icp display_flex justify-content_flex-justify align-items_center">
         <div class="display_flex align-items_center">
             <span class="line"></span>
             <span class="title">公安机关备案号</span>
         </div>
-        <input type="text" placeholder="请输入公安机关备案号" placeholder-class="placeholderClass001">
+        <input v-model="ICP" type="text" placeholder="请输入公安机关备案号" placeholder-class="placeholderClass001">
     </div>
     <div class="iCard">
         <div class="display_flex align-items_center">
@@ -50,32 +50,101 @@
       actionSheet,
       showModal,
       redirectTo,
-      reLaunch
+      reLaunch,
+      uploadFile,
+      toast
     } from "@/utils/wxapi.js";
+    import {applyBeInstaller,uploadImage} from "@/network/api";
+    import {
+      API_URL,
+    } from '@/network/config/hostConfig';
+    import {
+      publicParams
+    } from "@/network/config/publicParams";
+    import {
+      sign as getSign
+    } from "@/utils/signEncryption";
     export default {
       data() {
         return {
+          serviceProviderNumber: "", //服务商编号
+          userName: "", //姓名
+          ICP: "", //公安机关备案号
           idCardList: [{
-              src: ""
-          },{
-              src: ""
-          }]
+            src: "" //上传身份证正面
+          }, {
+            src: "" //上传身份证反面
+          }],
+          currentUploadImg: "",
         }
+      },
+      computed:{
+          applyBeInstallerParams(){ //申请成为工程师参数
+              return {
+                  openid: this.globalData.openId,
+                  store_no: this.serviceProviderNumber,
+                  realname: this.userName,
+                  idcard_font_img: this.idCardList[0].src,
+                  idcard_back_img: this.idCardList[1].src,
+                  security_record_num: this.ICP,
+                //   remark: "",
+                //   work_time: "",
+              }
+          },
+          uploadImageParams(){ //图片上传参数
+            let params = {
+              openid: this.globalData.openId,
+              method: 'uploadImage',
+              type: "idcard",
+              ...publicParams,
+            };
+            params.sign = getSign(params);
+            return {
+                // openid: this.globalData.openId,
+                // file: this.currentUploadImg,
+                url: API_URL,
+                filePath: this.currentUploadImg,
+                name: "file",
+                formData: params,
+            }
+          }
       },
       methods: {
         uploadIdCard(index) {;
           (async () => {
             let chooseImageRES = await chooseImage(1, ['album', 'camera']);
-            console.log(chooseImageRES.tempFilePaths[0]);
-            this.idCardList[index].src = chooseImageRES.tempFilePaths[0];
+            console.log(chooseImageRES);
+            this.currentUploadImg = chooseImageRES.tempFilePaths[0];
+            // let uploadImageRES = await uploadImage(this.uploadImageParams);
+            // console.log(uploadImageRES);
+            let uploadFileRES = await uploadFile(this.uploadImageParams);
+            console.log(uploadFileRES)
+            if(uploadFileRES.errCode == 0){ //上传成功
+                this.idCardList[index].src = uploadFileRES.file.file;
+            }else{
+                toast(uploadFileRES.errMsg)
+            }
           })()
         },
-        submit() {;
-          (async () => {
-            let showModalRES = await showModal("提交成功", "提交成功，我们尽快为您审核", false);
-            console.log(showModalRES);
-            if(showModalRES == 'ok'){
-                reLaunch("/pages/login/main")
+        submit() {
+        ;(async () => {
+            if (this.serviceProviderNumber == '') {
+              toast("服务商编号不能为空")
+            } else if (this.userName == '') {
+              toast("姓名不能为空")
+            } else if (this.idCardList[0].src == '') {
+              toast("请上传身份证正面")
+            } else if (this.idCardList[1].src == '') {
+              toast("请上传身份证反面")
+            } else {
+              let applyBeInstallerRES = await applyBeInstaller(this.applyBeInstallerParams);
+              console.log(applyBeInstallerRES)
+              if (applyBeInstallerRES.errCode == 0) {
+                await toast("提交成功")
+                redirectTo("/pages/login/register/auditIng/main");
+              } else {
+                toast(applyBeInstallerRES.errMsg)
+              }
             }
           })()
         }

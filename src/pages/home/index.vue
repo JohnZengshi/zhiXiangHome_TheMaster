@@ -4,48 +4,62 @@
     ref="Tabs"
     :tabsList="tabsList" 
     itemWidth="150"
-    @switchTab="switchTab"></Tabs>
+    @switchTab="switchTab">
+    </Tabs>
     <swiper
       class="swiperContent"
       @change="swiperChange"
       :current="currentSwiperIndex">
+      <div class="loadingBox">
+        <!-- <Loading v-if="true"></Loading> -->
+      </div>
       <swiper-item
-      class="swiperItemContent"
-      :key="index"
-      v-for="(item,index) in swiperDataList">
-      <ul>
-          <li 
-            :key="i"
-            v-for="(data,i) in item.dataList">
-                <div class="card display_flex">
-                  <div class="left display_flex flex-direction_column align-items_center">
-                    <img src="/static/images/homePage/install-icon.png" alt="">
-                    <span class="line"></span>
-                    <span class="type">{{data.type}}</span>
-                  </div>
-                  <div class="rigth display_flex flex-direction_column">
-                    <!-- <navigator url="/pages/home/orderDetail/main?id={{item.id}}"> -->
-                    <div @click="navigatoDetail(data.order)" class="detail display_flex flex-direction_column">
-                      <span class="titleName">
-                        <span class="name">{{data.titleName}}</span>
-                        <span class="type">{{item.text}}</span>
-                      </span>
-                      <span class="order">单号：{{data.order}}</span>
-                      <span class="appointment">预约时间：{{data.appointment}}</span>
-                      <span class="address">地址：{{data.address}}</span>
+        class="swiperItemContent"
+        :key="index"
+        v-for="(item,index) in swiperDataList">
+          <Loading 
+            v-if="(item.dataList.length == 0 && item.updataTag)"
+            :isLoading="item.dataList.length == 0">
+            </Loading>
+          <block v-if="item.dataList.length == 0">
+            <NoData></NoData>
+          </block>
+          <block v-else>
+            <ul>
+              <li 
+                :key="i"
+                v-for="(data,i) in item.dataList">
+                    <div class="card display_flex">
+                      <div class="left display_flex flex-direction_column align-items_center">
+                        <img src="/static/images/homePage/install-icon.png" alt="">
+                        <span class="line"></span>
+                        <span class="type">{{data.type}}</span>
+                      </div>
+                      <div class="rigth display_flex flex-direction_column">
+                        <div @click="navigatoDetail(data.order)" class="detail display_flex flex-direction_column">
+                          <span class="titleName">
+                            <span class="name">{{data.titleName}}</span>
+                            <span class="type">{{item.text}}</span>
+                          </span>
+                          <span class="order">单号：{{data.order}}</span>
+                          <span class="appointment">预约时间：{{data.appointment}}</span>
+                          <span class="address">地址：{{data.address}}</span>
+                        </div>
+                        <div class="callPhone display_flex flex-direction_column align-items_center" v-if="item.id > 0">
+                          <img src="/static/images/homePage/phone-icon.png" alt="">
+                          <span>顾客</span>
+                        </div>
+                        <div class="btn">
+                          <button 
+                            @click="clickBtn(btn)" 
+                            :class="{active : btn.active}" 
+                            :key="b" v-for="(btn,b) in data.btnList">{{btn.text}}</button>
+                        </div>
+                      </div>
                     </div>
-                    <!-- </navigator> -->
-                    <div class="callPhone display_flex flex-direction_column align-items_center" v-if="item.id > 0">
-                      <img src="/static/images/homePage/phone-icon.png" alt="">
-                      <span>顾客</span>
-                    </div>
-                    <div class="btn">
-                      <button @click="clickBtn(btn.id)" :class="{active : btn.active}" :key="b" v-for="(btn,b) in data.btnList">{{btn.text}}</button>
-                    </div>
-                  </div>
-                </div>
-          </li>
-      </ul>
+              </li>
+            </ul>
+          </block>
       </swiper-item>
     </swiper>
     <Popup 
@@ -60,15 +74,21 @@
 <script>
   import Tabs from "@/components/tabs.vue";
   import Popup from "@/components/popup.vue";
+  import NoData from "@/components/noData.vue";
+  import Loading from "@/components/loading.vue";
   import {showModal,toast,navigateTo} from "@/utils/wxapi";
   import {
     tabsList, //tabs栏数据
-    btnList, //按钮
   } from "@/constants/homeData"
+  import {
+    getWorkOrderList
+  } from "@/network/api";
   export default {
     components: {
       Tabs,
-      Popup
+      Popup,
+      NoData,
+      Loading
     },
     data() {
       return {
@@ -78,45 +98,26 @@
         showPopup: false, //弹窗显示
         popType: "", //弹窗类型
         selectPopupData: {},
+        // getDataListIng: false,
       }
     },
     computed: {
-
+      getWorkOrderListParams(){
+        return {
+          openid: this.globalData.openId,
+          type: "",
+          status: "1"
+        }
+      }
     },
     watch: {
       currentSwiperIndex: function (value) {
         let index = value - 0;
-        let btnList = tabsList[index].btnList
-        if (this.swiperDataList[index].dataList.length == 0) {
-          this.swiperDataList[index].dataList = [{
-            titleName: "智能版Q7",
-            type: "安装",
-            order: "10235698566",
-            appointment: "2018.125 09:00-12:00",
-            address: "广东省深圳市南山区粤海街道236号",
-            btnList: btnList
-          }, {
-            titleName: "智能版Q7",
-            type: "安装",
-            order: "10235698566",
-            appointment: "2018.125 09:00-12:00",
-            address: "广东省深圳市南山区粤海街道236号",
-            btnList: btnList
-          }, {
-            titleName: "智能版Q7",
-            type: "安装",
-            order: "10235698566",
-            appointment: "2018.125 09:00-12:00",
-            address: "广东省深圳市南山区粤海街道236号",
-            btnList: btnList
-          }, {
-            titleName: "智能版Q7",
-            type: "安装",
-            order: "10235698566",
-            appointment: "2018.125 09:00-12:00",
-            address: "广东省深圳市南山区粤海街道236号",
-            btnList: btnList
-          }];
+        let isCanUpdata = this.swiperDataList[index].updataTag;
+        if(isCanUpdata){
+          // this.getData(index)
+        }else{
+          return 
         }
       }
     },
@@ -128,9 +129,11 @@
       switchTab(index) { //tabs栏点击触发
         this.currentSwiperIndex = `${index}`;
       },
-      clickBtn(id){ //点击订单上的按钮
+      clickBtn(btn){ //点击订单上的按钮
+        let id = btn.id;
+        console.log(id);
         // this.showPopup = true;
-        this.popType = this.getPopupType(id);
+        this.popType = btn.popType;
         // wx.hideTabBar({})
         if(id == '1'){ //拒绝此单
           this.showPopup = true;
@@ -170,45 +173,55 @@
         let url = `/pages/home/orderDetail/main?orderId=${id}`;
         navigateTo(url);
       },
-      getPopupType(id) { // 获取弹窗类型
-        let item = btnList.find((val) => {
-          return val.id == id;
-        });
-        return item.popType;
-      },
+      getData(index){ //模拟获取数据
+        // this.getDataListIng = true;
+        let btnList = tabsList[index].btnList
+        setTimeout(() => {
+          if (this.swiperDataList[index].dataList.length == 0) {
+            // this.getDataListIng = false;
+            this.swiperDataList[index].updataTag = false;
+            if(index == 3) return;
+            this.swiperDataList[index].dataList = [{ //模拟数据
+              titleName: "智能版Q7",
+              type: "安装",
+              order: "10235698566",
+              appointment: "2018.125 09:00-12:00",
+              address: "广东省深圳市南山区粤海街道236号",
+              btnList: btnList
+            }, {
+              titleName: "智能版Q7",
+              type: "安装",
+              order: "10235698566",
+              appointment: "2018.125 09:00-12:00",
+              address: "广东省深圳市南山区粤海街道236号",
+              btnList: btnList
+            }, {
+              titleName: "智能版Q7",
+              type: "安装",
+              order: "10235698566",
+              appointment: "2018.125 09:00-12:00",
+              address: "广东省深圳市南山区粤海街道236号",
+              btnList: btnList
+            }, {
+              titleName: "智能版Q7",
+              type: "安装",
+              order: "10235698566",
+              appointment: "2018.125 09:00-12:00",
+              address: "广东省深圳市南山区粤海街道236号",
+              btnList: btnList
+            }];
+          }
+        }, 2000)
+      }
     },
-    
-    onLoad() {
-      let btnList = tabsList[0].btnList
-      this.swiperDataList[0].dataList = [{
-        titleName: "智能版Q7",
-        type: "安装",
-        order: "10235698566",
-        appointment: "2018.125 09:00-12:00",
-        address: "广东省深圳市南山区粤海街道236号",
-        btnList: btnList
-      }, {
-        titleName: "智能版Q7",
-        type: "安装",
-        order: "10235698566",
-        appointment: "2018.125 09:00-12:00",
-        address: "广东省深圳市南山区粤海街道236号",
-        btnList: btnList
-      }, {
-        titleName: "智能版Q7",
-        type: "安装",
-        order: "10235698566",
-        appointment: "2018.125 09:00-12:00",
-        address: "广东省深圳市南山区粤海街道236号",
-        btnList: btnList
-      }, {
-        titleName: "智能版Q7",
-        type: "安装",
-        order: "10235698566",
-        appointment: "2018.125 09:00-12:00",
-        address: "广东省深圳市南山区粤海街道236号",
-        btnList: btnList
-      }];
+    onLoad() {},
+    onShow() {
+      console.log("home-show")
+      // this.getData(0);
+      ;(async()=>{
+        let getWorkOrderListRES = await getWorkOrderList(this.getWorkOrderListParams);
+        console.log(getWorkOrderListRES)
+      })()
     }
   }
 </script>
@@ -216,11 +229,19 @@
 .homePage {
   height: 100%;
   background-color: #F5F5F5;
+  
   .swiperContent {
-    padding-top: 94rpx;
+    // transform: translateY(100rpx);
+    // margin-top: 94rpx;
     height: 100%;
     box-sizing: border-box;
-
+    position: relative;
+    z-index: 2;
+    .loadingBox {
+      width: 100%;
+      height: 94rpx;
+      position: relative;
+    }
     .swiperItemContent {
       overflow-y: scroll;
 
@@ -272,6 +293,7 @@
               height: 100%;
               padding: 0 20rpx 0 24rpx;
               position: relative;
+
               .detail {
                 box-sizing: border-box;
                 border-bottom: 1rpx solid rgba(216, 216, 216, 1);
@@ -322,6 +344,7 @@
                 }
 
               }
+
               .btn {
                 height: 127rpx;
 
@@ -343,6 +366,7 @@
                   }
                 }
               }
+
               .callPhone {
                 position: absolute;
                 right: 20rpx;
@@ -373,6 +397,7 @@
       }
     }
   }
+  
 }
 
 </style>

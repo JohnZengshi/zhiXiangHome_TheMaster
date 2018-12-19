@@ -2,7 +2,7 @@
   <div class="changePhonePage">
     <ul>
       <li class="display_flex justify-content_flex-justify align-items_center">
-        <input v-model="phone" type="text" placeholder="请输入手机号" placeholder-class="placeholderClass001">
+        <input v-model="phone" type="number" placeholder="请输入手机号" placeholder-class="placeholderClass001">
         <SendCode
           @getSendCode="getSendCode"
           :phoneNum="phone"></SendCode>
