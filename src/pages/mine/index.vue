@@ -50,11 +50,14 @@
 <script>
   import {login,makePhoneCall} from "@/utils/wxapi";
   export default {
+    computed: {
+    },
     methods:{
       concentKF(){
         makePhoneCall("400-2365-5698")
       }
-    }
+    },
+    onLoad(){}
   }
 
 </script>

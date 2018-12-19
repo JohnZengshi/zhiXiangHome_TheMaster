@@ -1,4 +1,5 @@
 <template>
+  <!-- 弹窗组件 -->
   <div class="popupComponent">
     <!-- 选择 -->
     <div v-if="popType == '1'" class="select display_flex flex-direction_column">

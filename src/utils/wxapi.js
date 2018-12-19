@@ -183,13 +183,15 @@ const showModal = (title, content, isCancel) => new Promise(resolve => {
   })
 })
 
-const toast = content => new Promise((resolve, reject) => {
+const toast = (content, time = 4000) => new Promise((resolve, reject) => {
   wx.showToast({
     title: content,
     icon: 'none',
-    duration: 4000,
+    duration: time,
     success: function (res) {
-      resolve(res)
+      setTimeout(() => {
+        resolve(res)
+      }, time)
     },
     fail: function (e) {
       reject(e)
@@ -398,13 +400,19 @@ const checkNetWork = () => new Promise((resolve, reject) => {
 })
 
 const uploadFile = params => new Promise((resolve, reject) => {
+  wx.showLoading({
+    title: '图片正在上传...',
+    mask: true
+  })
   wx.uploadFile({
     ...params,
     success: function (res) {
-      resolve(res)
+      resolve(JSON.parse(res.data));
+      wx.hideLoading()
     },
     fail: function (e) {
-      reject(e)
+      reject(e);
+      wx.hideLoading()
     }
   })
 })

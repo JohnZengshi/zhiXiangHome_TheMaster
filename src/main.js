@@ -2,17 +2,15 @@
 
 import Vue from 'vue'
 import App from './App'
-// import store from './store'
+import store from './store'
 // import * as util from './utils'
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 App.mpType = 'app'
 // Vue.prototype.util = util
-const app = new Vue(
-//     {
-//     store,
-//     ...App
-
-//   }
-  App)
+Vue.prototype.globalData = store.state.globalStore; //设置全局变量
+const app = new Vue({
+  store,
+  ...App
+})
 
 app.$mount()

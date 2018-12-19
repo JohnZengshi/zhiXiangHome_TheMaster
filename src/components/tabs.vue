@@ -1,4 +1,5 @@
 <template>
+  <!-- 头部tabs栏切换组件 -->
   <div class="tabsComponent">
     <ul>
       <li 
