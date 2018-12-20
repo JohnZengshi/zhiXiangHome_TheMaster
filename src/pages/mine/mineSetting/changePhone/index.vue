@@ -15,7 +15,7 @@
   </div>
 </template>
 <script>
-  import {changePhone,sendSmsCode} from "@/network/api";
+  import {changePhone,sendSmsCode,checkSmsCode} from "@/network/api";
   import {navigateTo,navigateBack,toast} from "@/utils/wxapi.js";
   import {RegExpr} from "@/utils/regex.js"
   import SendCode from "@/components/sendCode.vue";
@@ -34,10 +34,18 @@
         return {
           openid: this.globalData.openId,
           phone: this.phone,
-          type: "bind_phone",
+          type: "change_phone",
         }
       },
-      changePhoneParams(){
+      checkSmsCodeParams() { //验证验证码参数
+        return {
+          openid: this.globalData.openId,
+          phone: this.phone,
+          code: this.code,
+          type: "change_phone"
+        }
+      },
+      changePhoneParams(){ //更换手机参数
         return {
           openid: this.globalData.openId,
           phone: this.phone,
@@ -46,7 +54,7 @@
       }
     },
     methods:{
-      getSendCode() {;
+      getSendCode() {; //获取验证码
         (async () => {
           let sendSmsCodeRES = await sendSmsCode(this.sendSmsCodeParams)
           console.log(sendSmsCodeRES);
@@ -66,13 +74,19 @@
         }else{
           console.log("输入无误");
           ;(async()=>{
-            let changePhoneRES = await changePhone(this.changePhoneParams);
-            if(changePhoneRES.errCode == 0){
-              await toast(changePhoneRES.msg,1000);
-              navigateBack();
+            let checkSmsCodeRES = await checkSmsCode(this.checkSmsCodeParams);
+            if (checkSmsCodeRES.errCode == 0) {
+              let changePhoneRES = await changePhone(this.changePhoneParams);
+              if (changePhoneRES.errCode == 0) {
+                await toast(changePhoneRES.msg, 1000);
+                navigateBack();
+              } else {
+                toast(changePhoneRES.msg)
+              }
             }else{
-              toast(changePhoneRES.msg)
+              toast(checkSmsCodeRES.msg)
             }
+            
           })()
         }
       }
