@@ -21,7 +21,7 @@
             v-if="(item.dataList.length == 0 && item.updataTag)"
             :isLoading="item.dataList.length == 0">
             </Loading> -->
-          <block v-if="item.dataList.length == 0 && !item.updataTag">
+          <block v-if="item.dataList.length == 0">
             <NoData></NoData>
           </block>
           <block v-else>
@@ -46,7 +46,7 @@
                         <div @click="navigatoDetail(data.order)" class="detail display_flex flex-direction_column">
                           <span class="titleName">
                             <span class="name">{{data.titleName}}</span>
-                            <span class="type">{{item.text}}</span>
+                            <span class="type">{{data.status_txt}}</span>
                           </span>
                           <span class="order">单号：{{data.order}}</span>
                           <span class="appointment">预约时间：{{data.appointment}}</span>
@@ -86,6 +86,7 @@
   import {showModal,toast,navigateTo,makePhoneCall} from "@/utils/wxapi";
   import {
     tabsList, //tabs栏数据
+    order_statusList,
   } from "@/constants/homeData"
   import {
     getWorkOrderList,
@@ -94,6 +95,7 @@
     signWorkOrder,
     finishWorkOrder
   } from "@/network/api";
+  import {deepClone} from "@/utils/deepClone";
   export default {
     components: {
       Tabs,
@@ -151,7 +153,6 @@
         let index = value - 0;
         let isCanUpdata = this.swiperDataList[index].updataTag;
         if(isCanUpdata){
-          // this.getData(index)
           this.updataWorkOrderList();
         }else{
           return 
@@ -181,8 +182,9 @@
             if (res == 'ok') {
               let receiveWorkOrderRES = await receiveWorkOrder(this.receiveWorkOrderParams)
               if (receiveWorkOrderRES.errCode == 0) {
-                await toast(receiveWorkOrderRES.msg, 1000);
-                this.updataWorkOrderList();
+                await toast(receiveWorkOrderRES.msg, 500);
+                await this.updataWorkOrderList();
+                await this.autoSwiperPage();
               }
             }
           })()
@@ -208,7 +210,8 @@
               let signWorkOrderRES = await signWorkOrder(this.signWorkOrderParams);
               if (signWorkOrderRES.errCode == 0) {
                 await toast(signWorkOrderRES.msg, 1000);
-                this.updataWorkOrderList();
+                await this.updataWorkOrderList();
+                await this.autoSwiperPage();
               }
             }
           })()
@@ -219,8 +222,9 @@
             if (res == 'ok') {
               let finishWorkOrderRES = await finishWorkOrder(this.finishWorkOrderParams);
               if (finishWorkOrderRES.errCode == 0) {
-                await toast(finishWorkOrderRES.msg, 1000);
-                this.updataWorkOrderList();
+                toast(finishWorkOrderRES.msg, 500);
+                await this.updataWorkOrderList();
+                await this.autoSwiperPage();
               }
             }
           })()
@@ -245,7 +249,8 @@
           }, this.refuseWorkOrderParams))
           if (refuseWorkOrderRES.errCode == 0) {
             await toast(refuseWorkOrderRES.msg, 1000);
-            this.updataWorkOrderList();
+            await this.updataWorkOrderList();
+            this.swiperDataList[tabsList.length-1].updataTag = true;
           }
         })()
         // wx.showTabBar({})
@@ -294,8 +299,8 @@
           }
         }, 2000)
       },
-      updataWorkOrderList() {; //刷新工单数据
-        (async () => {
+      getWorkOrderList() {; //获取工单数据
+        return (async () => {
           let getWorkOrderListRES = await getWorkOrderList(this.getWorkOrderListParams);
           console.log(getWorkOrderListRES)
           if(getWorkOrderListRES.errCode == 0){
@@ -318,17 +323,48 @@
                 appointment: val.appointment,
                 address: val.address,
                 phone: val.phone,
-                btnList: btnList
+                btnList: btnList,
+                status_txt: order_statusList.find((v)=>{
+                  return v.status == val.work_order_status
+                }).text
               };
               return item;
               
             })
-            this.swiperDataList[this.currentSwiperIndex].dataList = list;
+            return list;
+            // this.swiperDataList[this.currentSwiperIndex].dataList = list;
+          }else{
+            return []
           }
+        })()
+      },
+      updataWorkOrderList() { //刷新工单数据
+        return (async () => {
+          if (Array.isArray(tabsList[this.currentSwiperIndex].status)) { //有多个状态
+            this.swiperDataList[this.currentSwiperIndex].dataList = [];
+            let statusList = tabsList[this.currentSwiperIndex].status;
+            statusList.forEach(async (val) => {
+              tabsList[this.currentSwiperIndex].status = val;
+              let List = await this.getWorkOrderList()
+              this.swiperDataList[this.currentSwiperIndex].dataList = this.swiperDataList[this.currentSwiperIndex].dataList.concat(List);
+            });
+            tabsList[this.currentSwiperIndex].status = statusList;
+          } else {
+            this.swiperDataList[this.currentSwiperIndex].dataList = await this.getWorkOrderList();
+          }
+          this.swiperDataList[this.currentSwiperIndex].updataTag = false; //单个页面默认滑动只刷新一次
+          return true;
         })()
       },
       callPhone(phone){ //打电话
         makePhoneCall(`${phone}`)
+      },
+      autoSwiperPage() { //自动滑动页面
+        let currentIndex = parseInt(this.currentSwiperIndex);
+        if (currentIndex < tabsList.length - 1) {
+          this.currentSwiperIndex = `${currentIndex + 1}`;
+          this.swiperDataList[this.currentSwiperIndex].updataTag = true;
+        }
       }
     },
     onLoad() {},
