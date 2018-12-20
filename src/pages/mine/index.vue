@@ -23,15 +23,17 @@
             <img src="/static/images/mainPage/arrows.png" alt="">
           </div>
         </li>
-        <li class="display_flex justify-content_flex-justify align-items_center">
-          <div class="display_flex align-items_center">
-            <img src="/static/images/mainPage/aboutUs.png" alt="">
-            <span>关于我们</span>
-          </div>
-          <div class="display_flex align-items_center">
-            <img src="/static/images/mainPage/arrows.png" alt="">
-          </div>
-        </li>
+        <navigator url="/pages/mine/aboutUs/main">
+          <li class="display_flex justify-content_flex-justify align-items_center">
+            <div class="display_flex align-items_center">
+              <img src="/static/images/mainPage/aboutUs.png" alt="">
+              <span>关于我们</span>
+            </div>
+            <div class="display_flex align-items_center">
+              <img src="/static/images/mainPage/arrows.png" alt="">
+            </div>
+          </li>
+        </navigator>
         <navigator url="/pages/mine/mineSetting/main">
           <li class="display_flex justify-content_flex-justify align-items_center">
             <div class="display_flex align-items_center">

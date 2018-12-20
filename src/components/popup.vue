@@ -94,7 +94,7 @@
     width: 100%;
     height: 100%;
     background: rgba(77, 61, 51, 0.5);
-
+    z-index: 2;
     .select {
       width: 100%;
       background-color: #fff;

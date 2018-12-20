@@ -38,7 +38,13 @@
       }
     },
     methods: {
-
+      resetRegist() { //重新注册
+        ;(async()=>{
+          await redirectTo("/pages/login/register/completeInformation/main");
+          this.auditIng = false;
+          this.auditFail = false;
+        })()
+      },
     },
     onShow(query) {;
       (async () => {

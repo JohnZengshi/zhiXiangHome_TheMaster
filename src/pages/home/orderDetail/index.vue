@@ -1,107 +1,155 @@
 <template>
   <div class="orderDetailPage">
-    <!-- 工单详情 -->
-    <div class="detial display_flex flex-direction_column">
-      <span class="title">工单详情</span>
-      <ul>
-        <li 
-        :key="index"
-        v-for="(item,index) in orderData.detail">
-          <div class="item display_flex justify-content_flex-justify align-items_center">
-            <div class="display_flex align-items_center">
-              <span class="line"></span>
-              <span class="text">{{item.title}}</span>
-            </div>
-            <span class="text">{{item.value}}</span>
-          </div>
-        </li>
-      </ul>
-    </div>
-    <!-- 服务地址 -->
-    <div class="adress display_flex flex-direction_column">
-      <span class="title">服务地址</span>
-      <span class="des">{{orderData.adress}}</span>
-    </div>
-    <!-- 维修说明 -->
-    <div class="instructions display_flex flex-direction_column">
-      <span class="title">维修说明</span>
-      <span class="des">{{orderData.instructions.des}}</span>
-      <div class="pic">
+    <block v-if="orderDetail">
+      <!-- 工单详情 -->
+      <div class="detial display_flex flex-direction_column">
+        <span class="title">工单详情</span>
         <ul>
           <li 
-            :key="index"
-            v-for="(item,index) in orderData.instructions.pic">
-            <img :src="item" alt="">
+          :key="index"
+          v-for="(item,index) in orderData.detail">
+            <div class="item display_flex justify-content_flex-justify align-items_center">
+              <div class="display_flex align-items_center">
+                <span class="line"></span>
+                <span class="text">{{item.title}}</span>
+              </div>
+              <span class="text">{{item.value}}</span>
+            </div>
           </li>
         </ul>
       </div>
-    </div>
-    <!-- 评价 -->
-    <div class="evaluation display_flex flex-direction_column">
-      <span class="title">评价</span>
-      <div 
-        class="evaluationList"
-        :key="index"
-        v-for="(item,index) in orderData.evaluation.graded">
-        <span class="title">{{item.title}}</span>
-        <Graded 
-          :imgs="imgs" 
-          :width="15" 
-          :height="15" 
-          :starValue="1" 
-          :initScroe="item.score"
-          :isClick="false"
-          @ok="back"></Graded>
+      <!-- 服务地址 -->
+      <div class="adress display_flex flex-direction_column">
+        <span class="title">服务地址</span>
+        <span class="des">{{orderData.adress}}</span>
       </div>
-      <span class="des">{{orderData.evaluation.des}}</span>
-    </div>
+      <!-- 安装/维修说明 -->
+      <div 
+        :class="{noData:(orderData.instructions.des == '' && orderData.instructions.pic.length == 0)}"
+        class="instructions display_flex flex-direction_column">
+        <span v-if="orderData.instructions.type == 1" class="title">安装说明</span>
+        <span v-else-if="orderData.instructions.type == 2" class="title">维修说明</span>
+        <block v-if="orderData.instructions.des != '' || orderData.instructions.pic.length != 0">
+          <span class="des">{{orderData.instructions.des}}</span>
+          <div class="pic">
+            <ul>
+              <li 
+                :key="index"
+                v-for="(item,index) in orderData.instructions.pic">
+                <img :src="item" alt="">
+              </li>
+            </ul>
+          </div>
+        </block>
+        <block v-else>
+          <NoData text="暂无说明"></NoData>         
+        </block>
+      </div>
+      <!-- 评价 -->
+      <div 
+        :class="{noData:!orderData.evaluation}"
+        class="evaluation display_flex flex-direction_column">
+        <span class="title">评价</span>
+        <block v-if="orderData.evaluation">
+          <div 
+            class="evaluationList"
+            :key="index"
+            v-for="(item,index) in orderData.evaluation.graded">
+            <span class="title">{{item.title}}</span>
+            <Graded 
+              :imgs="imgs" 
+              :width="15" 
+              :height="15" 
+              :starValue="1" 
+              :initScroe="item.score"
+              :isClick="false"
+              @ok="back"></Graded>
+          </div>
+          <div class="evaluationBox line display_flex flex-direction_column">
+            <span class="des title">用户评价：</span>
+            <span class="des">{{orderData.evaluation.des}}</span>
+          </div>
+          <div class="evaluationBox display_flex flex-direction_column">
+            <span class="des title">追加评价：</span>
+            <span class="des">{{orderData.evaluation.additionalDes}}</span>
+          </div>
+        </block>
+        <block v-else>
+          <NoData text="暂无评价"></NoData>
+        </block>
+      </div>
+    </block>
+    <block v-else>
+      <NoData></NoData>
+    </block>
   </div>
 </template>
 <script>
   import Graded from "@/components/graded.vue";
+  import {getWorkOrderDetail} from "@/network/api";
+  import NoData from "@/components/noData";
   export default {
     data() {
       return {
-        imgs:["/static/images/homePage/star-gray-icon.png","","/static/images/homePage/star-glod-icon.png"]
+        imgs:["/static/images/homePage/star-gray-icon.png","","/static/images/homePage/star-glod-icon.png"],
+        orderId: "",
+        orderDetail: null,
       }
     },
     components:{
       Graded,
+      NoData
     },
     computed: {
       orderData() {
-        return {
-          detail: [{
-            title: "状态",
-            value: "已完成"
-          },{
-            title: "工单编号",
-            value: "1023568565"
-          },{
-            title: "售后类型",
-            value: "维修"
-          },{
-            title: "设备分类",
-            value: "智能版Q7"
-          },{
-            title: "业主姓名",
-            value: "张飞"
-          }],
-          adress: "广东省深圳市南山区南山街道南山小区32栋3单元204室",
-          instructions: {
-            des: "Many people sign up for affiliate programs with the hopes of making some serious money.",
-            pic: ["http://img4.imgtn.bdimg.com/it/u=1020383179,3062284491&fm=26&gp=0.jpg","http://img4.imgtn.bdimg.com/it/u=1092627251,154743113&fm=26&gp=0.jpg","http://img0.imgtn.bdimg.com/it/u=1863431202,3112794646&fm=26&gp=0.jpg"]
-          },
-          evaluation: {
-            graded: [{
-              title: "服务态度",
-              score: 2,
+        if (this.orderDetail) {
+          const detail = this.orderDetail.detail;
+          const installer = this.orderDetail.installer;
+          const sku = this.orderDetail.sku;
+          const assess_list = this.orderDetail.assess_list;
+          
+          return {
+            detail: [{
+              title: "状态",
+              value: detail.status_txt
             }, {
-              title: "专业技能",
-              score: 5,
+              title: "工单编号",
+              value: detail.worder_sn
+            }, {
+              title: "售后类型",
+              value: detail.work_order_type == 1 ? '安装' : '维修'
+            }, {
+              title: "设备分类",
+              value: sku.name
+            }, {
+              title: "业主姓名",
+              value: detail.user_name
             }],
-            des: "Many people sign up for affiliate programs with the hopes of making some serious money.",
+            adress: detail.address,
+            instructions: {
+              type: detail.work_order_type,
+              des: detail.fault_desc,
+              pic: detail.images
+            },
+            evaluation: assess_list.length == 0 ? null : {
+              graded: assess_list[0].configs.map((val) => {
+                return {
+                  title: val.name,
+                  score: val.score,
+                }
+              }),
+              des: assess_list[0].msg,
+              additionalDes: assess_list[1].msg,
+            }
           }
+        }else{
+          return {}
+        }
+      },
+      getWorkOrderDetailParams(){
+        return {
+          openid: this.globalData.openId,
+          worder_sn: this.orderId,
         }
       }
     },
@@ -111,7 +159,18 @@
       }
     },
     onLoad(option) {
-      console.log(`工单id:${option.orderId}`)
+      console.log(`工单id:${option.orderId}`);
+      this.orderId = option.orderId;
+      ;(async()=>{
+        let getWorkOrderDetailRES = await getWorkOrderDetail(this.getWorkOrderDetailParams);
+        console.log(getWorkOrderDetailRES);
+        if(getWorkOrderDetailRES.errCode == 0){
+          this.orderDetail = getWorkOrderDetailRES;
+          console.log(this.orderDetail);
+        }else{
+
+        }
+      })()
     }
   }
 </script>
@@ -131,7 +190,7 @@
             color:rgba(77,61,51,1);
             background: rgba(241, 241, 241, 1);
         }
-        >.des{
+        .des{
             padding: 30rpx;
             font-size:27rpx;
             font-family:PingFangSC-Regular;
@@ -168,6 +227,9 @@
         }
     }
     .instructions{
+        &.noData{
+          height: 470rpx;
+        }
         .pic{
           ul{
             padding: 0 107rpx;
@@ -189,6 +251,9 @@
         }
     }
     .evaluation{
+        &.noData{
+          height: 345rpx;
+        }
         .evaluationList{
             padding: 30rpx;
             border-bottom: 1rpx solid rgba(241, 241, 241, 1);
@@ -208,6 +273,15 @@
                   -moz-background-size: 100% 100%;
                 }
             }
+        }
+
+        .evaluationBox{
+          .title{
+            padding: 30rpx 0 0 30rpx;
+          }
+          &.line{
+            border-bottom: 1rpx solid #f1f1f1;
+          }
         }
     }
   }

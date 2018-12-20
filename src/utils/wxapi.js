@@ -168,11 +168,12 @@ const handleScan = () => new Promise((resolve, reject) => {
   })
 })
 
-const showModal = (title, content, isCancel) => new Promise(resolve => {
+const showModal = (title, content, isCancel, confirmColor = '#F5D085') => new Promise(resolve => {
   wx.showModal({
     title: title,
     content: content,
     showCancel: isCancel,
+    confirmColor: confirmColor,
     success: function (res) {
       if (res.confirm) {
         resolve('ok')
@@ -250,6 +251,12 @@ const alert = content => new Promise((resolve, reject) => {
 const navigateTo = url => {
   wx.navigateTo({
     url
+  })
+}
+
+const navigateBack = (delta = 1) => {
+  wx.navigateBack({
+    delta: delta
   })
 }
 
@@ -478,6 +485,7 @@ export {
   getUserInfo,
   alert,
   navigateTo,
+  navigateBack,
   redirectTo,
   switchTab,
   reLaunch,

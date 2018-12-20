@@ -28,6 +28,11 @@ let btnList = [{
   id: "5",
   popType: "2", //弹窗类型
   active: false,
+}, {
+  text: "已评价",
+  id: "6",
+  popType: "", //弹窗类型
+  active: true,
 }];
 
 let tabsList = [{
@@ -38,6 +43,7 @@ let tabsList = [{
       return val.id == '0' || val.id == '1'
     }),
     updataTag: true, //是否可以刷新数据
+    status: 1,
   },
   {
     text: "待上门",
@@ -47,6 +53,7 @@ let tabsList = [{
       return val.id == '2'
     }),
     updataTag: true,
+    status: 2,
   },
   {
     text: "进行中",
@@ -56,15 +63,17 @@ let tabsList = [{
       return val.id == '3'
     }),
     updataTag: true,
+    status: 3,
   },
   {
     text: "已完成",
     id: "3",
     dataList: [],
     btnList: btnList.filter((val)=>{
-      return val.id == '4'
+      return val.id == '4' || val.id == '6'
     }),
     updataTag: true,
+    status: 4,
   },
   {
     text: "已取消",
@@ -74,6 +83,7 @@ let tabsList = [{
       return val.id == '5'
     }),
     updataTag: true,
+    status: -1,
   },
 ];
 

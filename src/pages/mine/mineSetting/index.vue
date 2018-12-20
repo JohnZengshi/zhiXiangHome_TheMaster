@@ -1,14 +1,14 @@
 <template>
   <div class="mineSettingPage">
     <ul>
-      <navigator url="/pages/mine/mineSetting/changePassword/main">
+      <!-- <navigator url="/pages/mine/mineSetting/changePassword/main">
         <li>
           <div class="display_flex justify-content_flex-justify align-items_center">
             <span>修改密码</span>
             <img src="/static/images/mainPage/arrows.png" alt="">
           </div>
         </li>
-      </navigator>
+      </navigator> -->
       <navigator url="/pages/mine/mineSetting/changePhone/main">
         <li>
           <div class="display_flex justify-content_flex-justify align-items_center">
