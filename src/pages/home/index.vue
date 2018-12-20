@@ -334,7 +334,9 @@
     onLoad() {},
     onShow() {
       console.log("home-show")
-      this.updataWorkOrderList();
+      if(this.globalData.openId != ''){
+        this.updataWorkOrderList();
+      }
     }
   }
 </script>
