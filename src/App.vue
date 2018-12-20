@@ -16,7 +16,8 @@
   export default {
     data(){
       return {
-        code: "" //用户登录code
+        code: "", //用户登录code
+        restartBindPhone: false, //是否绑定手机
       }
     },
     computed: {
@@ -81,7 +82,7 @@
 
             if (Array.isArray(profile) && profile.length == 0) { //没有相关信息，手机未绑定
               console.log("未绑定手机,跳转到手机绑定页面");
-              await toast('未绑定手机', 1000);
+              await toast('未绑定手机', 500);
               redirectTo("/pages/login/register/main");
             } else { //有相关信息，手机已绑定
               // let profile = await UserInfoUpdata(this.getUserProfileParams);
@@ -111,8 +112,20 @@
     },
     onShow() {
       // console.log("app onshow")
+      // ;
+      // (async () => {
+      //   if (this.restartBindPhone) {
+      //     await toast('未绑定手机', 500);
+      //     redirectTo("/pages/login/register/main");
+      //   }
+      // })()
     },
-    onHide() {}
+    onHide() {
+      // if(!this.globalData.userInfo){
+      //   console.log("页面隐藏，页面再次进入重新绑定手机")
+      //   this.restartBindPhone = true;
+      // }
+    }
   }
 </script>
 <style lang="less">

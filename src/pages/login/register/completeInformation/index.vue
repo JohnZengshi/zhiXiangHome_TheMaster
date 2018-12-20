@@ -140,7 +140,7 @@
               let applyBeInstallerRES = await applyBeInstaller(this.applyBeInstallerParams);
               console.log(applyBeInstallerRES)
               if (applyBeInstallerRES.errCode == 0) {
-                await toast("提交成功")
+                await toast(applyBeInstallerRES.msg,500)
                 redirectTo("/pages/login/register/auditIng/main");
               } else {
                 toast(applyBeInstallerRES.errMsg)
