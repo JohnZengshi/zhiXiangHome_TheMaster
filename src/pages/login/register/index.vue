@@ -98,9 +98,6 @@
           
         }
       },
-      resetRegist(){ //重新注册
-        this.auditIng = false;
-      },
       getSendCode() { //获取验证码回调
         ;(async () => {
           let sendSmsCodeRES = await sendSmsCode(this.sendSmsCodeParams)

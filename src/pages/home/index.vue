@@ -10,18 +10,18 @@
       class="swiperContent"
       @change="swiperChange"
       :current="currentSwiperIndex">
-      <div class="loadingBox">
+      <!-- <div class="loadingBox"> -->
         <!-- <Loading v-if="true"></Loading> -->
-      </div>
+      <!-- </div> -->
       <swiper-item
         class="swiperItemContent"
         :key="index"
         v-for="(item,index) in swiperDataList">
-          <Loading 
+          <!-- <Loading 
             v-if="(item.dataList.length == 0 && item.updataTag)"
             :isLoading="item.dataList.length == 0">
-            </Loading>
-          <block v-if="item.dataList.length == 0">
+            </Loading> -->
+          <block v-if="item.dataList.length == 0 && !item.updataTag">
             <NoData></NoData>
           </block>
           <block v-else>
@@ -31,9 +31,16 @@
                 v-for="(data,i) in item.dataList">
                     <div class="card display_flex">
                       <div class="left display_flex flex-direction_column align-items_center">
-                        <img src="/static/images/homePage/install-icon.png" alt="">
-                        <span class="line"></span>
-                        <span class="type">{{data.type}}</span>
+                        <block v-if="data.type == 1">
+                          <img src="/static/images/homePage/install-icon.png" alt="">
+                          <span class="line"></span>
+                          <span class="type">安装</span>
+                        </block>
+                        <block v-else-if="data.type == 2">
+                          <img src="/static/images/homePage/service-icon.png" alt="">
+                          <span class="line"></span>
+                          <span class="type">维修</span>
+                        </block>
                       </div>
                       <div class="rigth display_flex flex-direction_column">
                         <div @click="navigatoDetail(data.order)" class="detail display_flex flex-direction_column">
@@ -45,13 +52,13 @@
                           <span class="appointment">预约时间：{{data.appointment}}</span>
                           <span class="address">地址：{{data.address}}</span>
                         </div>
-                        <div class="callPhone display_flex flex-direction_column align-items_center" v-if="item.id > 0">
+                        <div @click="callPhone(data.phone)" class="callPhone display_flex flex-direction_column align-items_center" v-if="item.id > 0">
                           <img src="/static/images/homePage/phone-icon.png" alt="">
                           <span>顾客</span>
                         </div>
                         <div class="btn">
                           <button 
-                            @click="clickBtn(btn)" 
+                            @click="clickBtn(btn,data)" 
                             :class="{active : btn.active}" 
                             :key="b" v-for="(btn,b) in data.btnList">{{btn.text}}</button>
                         </div>
@@ -76,12 +83,16 @@
   import Popup from "@/components/popup.vue";
   import NoData from "@/components/noData.vue";
   import Loading from "@/components/loading.vue";
-  import {showModal,toast,navigateTo} from "@/utils/wxapi";
+  import {showModal,toast,navigateTo,makePhoneCall} from "@/utils/wxapi";
   import {
     tabsList, //tabs栏数据
   } from "@/constants/homeData"
   import {
-    getWorkOrderList
+    getWorkOrderList,
+    receiveWorkOrder,
+    refuseWorkOrder,
+    signWorkOrder,
+    finishWorkOrder
   } from "@/network/api";
   export default {
     components: {
@@ -99,14 +110,39 @@
         popType: "", //弹窗类型
         selectPopupData: {},
         // getDataListIng: false,
+        currentOrder: {}, //当前操作的工单
       }
     },
     computed: {
-      getWorkOrderListParams(){
+      getWorkOrderListParams(){ //获取工单列表参数
         return {
           openid: this.globalData.openId,
           type: "",
-          status: "1"
+          status: tabsList[this.currentSwiperIndex].status
+        }
+      },
+      receiveWorkOrderParams(){ //接单参数
+        return {
+          openid: this.globalData.openId,
+          worder_sn: this.currentOrder.order
+        }
+      },
+      refuseWorkOrderParams(){ //拒绝此单参数
+        return {
+          openid: this.globalData.openId,
+          worder_sn: this.currentOrder.order
+        }
+      },
+      signWorkOrderParams() { //工程师现场签到操作参数
+        return {
+          openid: this.globalData.openId,
+          worder_sn: this.currentOrder.order
+        }
+      },
+      finishWorkOrderParams(){ //工程师确认完成操作参数
+        return {
+          openid: this.globalData.openId,
+          worder_sn: this.currentOrder.order
         }
       }
     },
@@ -116,6 +152,7 @@
         let isCanUpdata = this.swiperDataList[index].updataTag;
         if(isCanUpdata){
           // this.getData(index)
+          this.updataWorkOrderList();
         }else{
           return 
         }
@@ -129,13 +166,27 @@
       switchTab(index) { //tabs栏点击触发
         this.currentSwiperIndex = `${index}`;
       },
-      clickBtn(btn){ //点击订单上的按钮
+      clickBtn(btn,data){ //点击订单上的按钮
         let id = btn.id;
-        console.log(id);
+        console.log(id,data);
         // this.showPopup = true;
+        this.currentOrder = data;
         this.popType = btn.popType;
         // wx.hideTabBar({})
-        if(id == '1'){ //拒绝此单
+        if (id == '0') { //接单
+          ;
+          (async () => {
+            let res = await showModal("接单", "确定接此订单吗？", true);
+            console.log(res);
+            if (res == 'ok') {
+              let receiveWorkOrderRES = await receiveWorkOrder(this.receiveWorkOrderParams)
+              if (receiveWorkOrderRES.errCode == 0) {
+                await toast(receiveWorkOrderRES.msg, 1000);
+                this.updataWorkOrderList();
+              }
+            }
+          })()
+        } else if (id == '1') { //拒绝此单
           this.showPopup = true;
           this.popupData = {
             title: "请选择拒绝工单的原因",
@@ -144,17 +195,38 @@
             selectList: [{
               text: "我没时间",
               id: "0"
-            },{
+            }, {
               text: "其他",
               id: "1"
             }]
-          }
-        }else if(id == '5'){ //删除
-          // this.showPopup = true;
-          // this.popupData = {
-          //   title: "确定删除此订单吗？"
-          // };
-          (async()=>{
+          };
+        } else if (id == '2') { //签到
+          ;
+          (async () => {
+            let res = await showModal("签到", "确定签到吗？", true);
+            if (res == 'ok') {
+              let signWorkOrderRES = await signWorkOrder(this.signWorkOrderParams);
+              if (signWorkOrderRES.errCode == 0) {
+                await toast(signWorkOrderRES.msg, 1000);
+                this.updataWorkOrderList();
+              }
+            }
+          })()
+        } else if (id == '3') { //服务完成
+          ;
+          (async () => {
+            let res = await showModal("服务完成", "确定服务完成吗？", true);
+            if (res == 'ok') {
+              let finishWorkOrderRES = await finishWorkOrder(this.finishWorkOrderParams);
+              if (finishWorkOrderRES.errCode == 0) {
+                await toast(finishWorkOrderRES.msg, 1000);
+                this.updataWorkOrderList();
+              }
+            }
+          })()
+        } else if (id == '5') { //删除
+          ;
+          (async () => {
             let res = await showModal("删除", "确定删除此订单吗？", true);
             console.log(res);
           })()
@@ -167,6 +239,15 @@
       confirm(data) { //弹窗确定
         console.log(data);
         this.showPopup = false;
+        ;(async()=>{
+          let refuseWorkOrderRES = await refuseWorkOrder(Object.assign({
+            remark: data.text
+          }, this.refuseWorkOrderParams))
+          if (refuseWorkOrderRES.errCode == 0) {
+            await toast(refuseWorkOrderRES.msg, 1000);
+            this.updataWorkOrderList();
+          }
+        })()
         // wx.showTabBar({})
       },
       navigatoDetail(id) { //点击卡片跳转到工单详情
@@ -212,16 +293,48 @@
             }];
           }
         }, 2000)
+      },
+      updataWorkOrderList() {; //刷新工单数据
+        (async () => {
+          let getWorkOrderListRES = await getWorkOrderList(this.getWorkOrderListParams);
+          console.log(getWorkOrderListRES)
+          if(getWorkOrderListRES.errCode == 0){
+            console.log(getWorkOrderListRES.list)
+            let btnList = tabsList[this.currentSwiperIndex].btnList
+            let list = getWorkOrderListRES.list.map((val)=>{
+              if (this.currentSwiperIndex == '3') { //已完成的工单按钮判断
+                btnList = btnList.filter((v) => {
+                  if (val.has_assess == 1) {
+                    return v.id == "6" //已评价
+                  }else{
+                    return v.id == "4" //待评价
+                  }
+                })
+              }
+              let item = {
+                titleName: val.sku_name,
+                type: val.work_order_type,
+                order: val.worder_sn,
+                appointment: val.appointment,
+                address: val.address,
+                phone: val.phone,
+                btnList: btnList
+              };
+              return item;
+              
+            })
+            this.swiperDataList[this.currentSwiperIndex].dataList = list;
+          }
+        })()
+      },
+      callPhone(phone){ //打电话
+        makePhoneCall(`${phone}`)
       }
     },
     onLoad() {},
     onShow() {
       console.log("home-show")
-      // this.getData(0);
-      ;(async()=>{
-        let getWorkOrderListRES = await getWorkOrderList(this.getWorkOrderListParams);
-        console.log(getWorkOrderListRES)
-      })()
+      this.updataWorkOrderList();
     }
   }
 </script>
@@ -231,12 +344,11 @@
   background-color: #F5F5F5;
   
   .swiperContent {
-    // transform: translateY(100rpx);
-    // margin-top: 94rpx;
+    // transform: translateY(94rpx);
+    padding-top: 94rpx;
     height: 100%;
     box-sizing: border-box;
     position: relative;
-    z-index: 2;
     .loadingBox {
       width: 100%;
       height: 94rpx;

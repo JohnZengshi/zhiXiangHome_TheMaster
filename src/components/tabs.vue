@@ -49,6 +49,7 @@
     position: absolute;
     top: 0;
     background-color: #fff;
+    z-index: 1;
     ul {
       height: 94rpx;
 

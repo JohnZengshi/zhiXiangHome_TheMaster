@@ -15,7 +15,8 @@
   </div>
 </template>
 <script>
-  import {navigateTo,toast} from "@/utils/wxapi.js";
+  import {changePhone,sendSmsCode} from "@/network/api";
+  import {navigateTo,navigateBack,toast} from "@/utils/wxapi.js";
   import {RegExpr} from "@/utils/regex.js"
   import SendCode from "@/components/sendCode.vue";
   export default {
@@ -28,9 +29,33 @@
     components:{
       SendCode,
     },
+    computed:{
+      sendSmsCodeParams(){ //发送短信验证码参数
+        return {
+          openid: this.globalData.openId,
+          phone: this.phone,
+          type: "bind_phone",
+        }
+      },
+      changePhoneParams(){
+        return {
+          openid: this.globalData.openId,
+          phone: this.phone,
+          old_phone: this.globalData.userInfo.phone,
+        }
+      }
+    },
     methods:{
-      getSendCode(){
-
+      getSendCode() {;
+        (async () => {
+          let sendSmsCodeRES = await sendSmsCode(this.sendSmsCodeParams)
+          console.log(sendSmsCodeRES);
+          if (sendSmsCodeRES.errCode == 0) {
+            toast(sendSmsCodeRES.msg);
+          } else {
+            toast(sendSmsCodeRES.errMsg)
+          }
+        })()
       },
       confirm(){
         let isPhone = RegExpr.checkMobile(this.phone)
@@ -39,7 +64,16 @@
         }else if(this.code == ''){
           toast("验证码不能为空")
         }else{
-          console.log("输入无误")
+          console.log("输入无误");
+          ;(async()=>{
+            let changePhoneRES = await changePhone(this.changePhoneParams);
+            if(changePhoneRES.errCode == 0){
+              await toast(changePhoneRES.msg,1000);
+              navigateBack();
+            }else{
+              toast(changePhoneRES.msg)
+            }
+          })()
         }
       }
     }
