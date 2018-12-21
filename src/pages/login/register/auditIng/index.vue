@@ -3,7 +3,7 @@
     <block v-if="auditFail">
       <img src="/static/images/loginPage/auditFail-image.png" alt="">
       <span>审核失败</span>
-      <span>这里是审核失败的备注</span>
+      <span>{{auditFailRemark}}</span>
       <button @click="resetRegist" class="btn confirmBtn">重新修改提交</button>
     </block>
     <block v-else-if="auditIng">
@@ -15,7 +15,8 @@
 </template>
 <script>
   import {
-    getUserProfile
+    getUserProfile,
+    getInstallerDetail
   } from "@/network/api";
   import {
     UserInfoUpdata
@@ -29,10 +30,16 @@
       return {
         auditIng: false, //审核中
         auditFail: false, //审核失败
+        auditFailRemark: "", //审核失败的备注
       }
     },
     computed: {
       getUserProfileParams() { //获取用户信息参数
+        return {
+          openid: this.globalData.openId,
+        }
+      },
+      getInstallerDetailParams(){ //获取工程师参数
         return {
           openid: this.globalData.openId,
         }
@@ -49,28 +56,27 @@
     },
     onShow(query) {;
       (async () => {
-        // let profile = await UserInfoUpdata(this.getUserProfileParams);
-        let getUserProfileRES = await getUserProfile(this.getUserProfileParams); //获取个人信息
-        if (getUserProfileRES.errCode == 0) {
-          let profile = getUserProfileRES.profile;
-          this.globalData.userInfo = profile;
-
-          let check_status = profile.installer.check_status;
-          // check_status = 1;
-          console.log(check_status);
+        let getInstallerDetailRES = await getInstallerDetail(this.getInstallerDetailParams);
+        console.log(getInstallerDetailRES)
+        if (getInstallerDetailRES.errCode == 0) {
+          let detail = getInstallerDetailRES.detail;
+          let check_status = detail.check_status;
+          // console.log(this.globalData)
           if (check_status == 0) { //待审核
             console.log("待审核")
           } else if (check_status == 1) {
-            console.log("跳转到首页")
+            console.log("跳转到首页");
+            this.globalData.installerInfo = detail;
             switchTab("/pages/home/main");
           } else if (check_status == -1 || check_status == -3) { //审核中
             this.auditIng = true;
           } else if (check_status == -2 || check_status == -4) { //审核失败
             this.auditFail = true;
+            this.auditFailRemark = detail.admin_remark;
           }
 
         } else {
-          toast(getUserProfileRES.errMsg)
+          toast(getInstallerDetailRES.errMsg)
         }
         
       })()
