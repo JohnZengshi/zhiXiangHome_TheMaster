@@ -12,6 +12,8 @@ npm run build
 
 # build for production and view the bundle analyzer report
 npm run build --report
+
+# 用小程序开发工具打开dist文件即可运行
 ```
 # 核心组件库
 * mpvue
