@@ -7,7 +7,8 @@
         <ul>
           <li 
           :key="index"
-          v-for="(item,index) in orderData.detail">
+          v-for="(item,index) in orderData.detail"
+          v-if="!item.hide">
             <div class="item display_flex justify-content_flex-justify align-items_center">
               <div class="display_flex align-items_center">
                 <span class="line"></span>
@@ -124,6 +125,16 @@
             }, {
               title: "业主姓名",
               value: detail.user_name
+            }, {
+              title: "联系电话",
+              value: detail.phone
+            }, {
+              title: "预约时间",
+              value: detail.appointment
+            }, {
+              title: "完成时间",
+              value: detail.finish_timem,
+              hide: detail.work_order_type != 4 ? true : false,
             }],
             adress: detail.address,
             instructions: {

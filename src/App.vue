@@ -3,7 +3,9 @@
     login,
     getUserInfo,
     toast,
-    redirectTo
+    redirectTo,
+    switchTab,
+    reLaunch
   } from "@/utils/wxapi";
   import {
     authorized,
@@ -55,7 +57,8 @@
             if (check_status == 0) { //待审核
               console.log("待审核")
             } else if (check_status == 1) {
-              console.log("工程师信息正常")
+              console.log("工程师信息正常");
+              switchTab("/pages/home/main");
             } else { //审核中或审核失败
               console.log("工程师信息审核中或审核失败")
               redirectTo("/pages/login/register/auditIng/main");

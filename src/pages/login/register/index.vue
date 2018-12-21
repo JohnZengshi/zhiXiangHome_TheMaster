@@ -15,6 +15,19 @@
           <input v-model="password" type="text" placeholder="请设置密码" placeholder-class="placeholderClass001">
         </li> -->
       </ul>
+      <div 
+        :class="{ReadeAgreement:isReadeAgreement}"
+        class="SelectBox display_flex align-items_center">
+        <SelectBox 
+        model="oneSelect"
+        @selectBack="selectBack"></SelectBox>
+        <span>同意</span>
+        <span class="agreement">
+          <navigator url="/pages/login/register/agreement/main" open-type="navigate" hover-class="none">
+            用户服务协议
+          </navigator>
+        </span>
+      </div>
       <button @click="navigatoInformation" class="confirmBtn">下一步</button>
     </div>
   </div>
@@ -23,6 +36,7 @@
   import {navigateTo,toast,redirectTo} from "@/utils/wxapi.js";
   import {RegExpr} from "@/utils/regex.js"
   import SendCode from "@/components/sendCode.vue";
+  import SelectBox from "@/components/select.vue";
   import {bindPhone,sendSmsCode,checkSmsCode,getUserProfile} from "@/network/api";
   export default {
     data() {
@@ -32,10 +46,12 @@
         phone: "", //输入的手机号
         code: "", //输入的验证码
         password: "", //输入的密码
+        isReadeAgreement: false, //是否阅读了用户协议
       }
     },
     components:{
       SendCode,
+      SelectBox
     },
     computed:{
       getUserProfileParams(){ //获取个人信息参数
@@ -76,6 +92,9 @@
         // else if(this.password == ""){ //密码不能为空
         //   toast("密码不能为空")
         // }
+        else if(!this.isReadeAgreement){
+          toast("请同意用户协议")
+        }
         else{ //输入无误
           console.log("输入无误");
           ;(async()=>{
@@ -109,6 +128,9 @@
           }
         })()
       },
+      selectBack(flag) { //单选回调
+        this.isReadeAgreement = flag;
+      }
     },
     onLoad(query) {
       // scene 需要使用 decodeURIComponent 才能获取到生成二维码时传入的 scene
@@ -132,10 +154,33 @@
         li {
           margin-top: 26rpx;
           border-bottom: 1rpx solid #E4E4E4;
-
           input {
             height: 94rpx;
             width: 100%;
+          }
+
+          
+        }
+      }
+      .SelectBox {
+        margin-top: 40rpx;
+        >span {
+          opacity: 0.5;
+          font-size: 22rpx;
+          font-family: PingFangSC-Regular;
+          font-weight: 400;
+          color: rgba(77, 61, 51, 1);
+          &:first-of-type{
+            margin-right: 10rpx;
+          }
+          &.agreement{
+            opacity: 1 !important;
+            color: rgba(245,208,133,1);
+          }
+        }
+        &.ReadeAgreement{
+          >span{
+            opacity: 1;
           }
         }
       }

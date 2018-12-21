@@ -202,7 +202,7 @@ const HttpUtils = {
               
             } else {
               wx.showToast({
-                title: '服务器异常',
+                title: res.errMsg,
                 icon: 'none',
                 duration: 4000
               })

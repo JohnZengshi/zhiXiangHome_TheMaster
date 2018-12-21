@@ -1,13 +1,14 @@
 {
     "pages": [
-      "pages/mine/main",
+      "pages/index/main",
 
       "pages/login/main",
-      "pages/login/register/main",      
+      "pages/login/register/main",
       "pages/login/register/completeInformation/main",
       "pages/login/register/auditIng/main",
+      "pages/login/register/agreement/main",
       
-      
+      "pages/mine/main",
       "pages/mine/aboutUs/main",
       "pages/mine/mineSetting/main",
       "pages/mine/mineSetting/changePassword/main",

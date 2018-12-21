@@ -54,7 +54,11 @@
       uploadFile,
       toast
     } from "@/utils/wxapi.js";
-    import {applyBeInstaller,uploadImage} from "@/network/api";
+    import {
+      applyBeInstaller,
+      uploadImage,
+      getInstallerDetail
+    } from "@/network/api";
     import {
       API_URL,
     } from '@/network/config/hostConfig';
@@ -64,6 +68,9 @@
     import {
       sign as getSign
     } from "@/utils/signEncryption";
+    import {
+      RegExpr
+    } from "@/utils/regex";
     export default {
       data() {
         return {
@@ -107,6 +114,11 @@
                 name: "file",
                 formData: params,
             }
+          },
+          getInstallerDetailParams() { //获取工程师信息参数
+            return {
+              openid: this.globalData.openId
+            }
           }
       },
       methods: {
@@ -126,12 +138,14 @@
             }
           })()
         },
-        submit() {
-        ;(async () => {
+        submit() {;
+          (async () => {
             if (this.serviceProviderNumber == '') {
               toast("服务商编号不能为空")
             } else if (this.userName == '') {
               toast("姓名不能为空")
+            } else if(!RegExpr.checkUserName(this.userName)){
+              toast("姓名不能包含特殊字符")
             } else if (this.idCardList[0].src == '') {
               toast("请上传身份证正面")
             } else if (this.idCardList[1].src == '') {
@@ -140,7 +154,7 @@
               let applyBeInstallerRES = await applyBeInstaller(this.applyBeInstallerParams);
               console.log(applyBeInstallerRES)
               if (applyBeInstallerRES.errCode == 0) {
-                await toast(applyBeInstallerRES.msg,500)
+                await toast(applyBeInstallerRES.msg, 500)
                 redirectTo("/pages/login/register/auditIng/main");
               } else {
                 toast(applyBeInstallerRES.errMsg)
@@ -148,6 +162,20 @@
             }
           })()
         }
+      },
+      onLoad(){
+          ;(async()=>{
+              let getInstallerDetailRES =await getInstallerDetail(this.getInstallerDetailParams);
+              console.log(getInstallerDetailRES);
+              if(getInstallerDetailRES.errCode == 0){
+                  let detail = getInstallerDetailRES.detail;
+                  this.serviceProviderNumber = detail.store_no;
+                  this.userName = detail.realname;
+                  this.ICP = detail.security_record_num;
+                  this.idCardList[0].src = detail.idcard_font_img;
+                  this.idCardList[1].src = detail.idcard_back_img;
+              }
+          })()
       }
     }
 </script>

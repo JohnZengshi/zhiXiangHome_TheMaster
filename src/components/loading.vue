@@ -48,7 +48,7 @@
         margin: 4rpx;
         -webkit-animation-fill-mode: both;
         animation-fill-mode: both;
-        border: 8rpx solid #F5D085;
+        border: 8rpx solid rgba(245,208,133,1);
         border-bottom-color: transparent;
         background: transparent !important;
         display: inline-block;

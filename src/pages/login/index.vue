@@ -125,7 +125,7 @@
       margin-top: 50rpx;
       >span {
         &:last-of-type {
-          color: #F5D085;
+          color: rgba(245,208,133,1);
         }
       }
     }
