@@ -10,7 +10,8 @@
   import {
     authorized,
     getThirdOpenid,
-    getUserProfile
+    getUserProfile,
+    getStoreDetail
   } from "@/network/api";
   import {
     UserInfoUpdata
@@ -67,9 +68,24 @@
             console.log("是工程师,手机已绑定");
           }
         })()
-      }
+      },
+      byQrcode(option) { //是否是扫码进入的小程序
+        let store_no = option.query.store_no;
+        if(store_no){
+          ;(async()=>{
+            let getStoreDetailRES = await getStoreDetail({store_no});
+            if(getStoreDetailRES.errCode == 0){
+              this.globalData.serverStoreInfo = getStoreDetailRES.detail;
+            }else{
+              toast(getStoreDetailRES.errMsg);
+            }
+          })()
+        }else{
+          return;
+        }
+      },
     },
-    onLaunch() {;
+    onLaunch(option) {;
       (async () => {
         let loginRES = await login();
         this.code = loginRES.code;
@@ -108,7 +124,9 @@
         }
 
         console.log(this.globalData);
-      })()
+      })();
+
+      this.byQrcode(option);
     },
     created() {
       // console.log("app created and cache logs by setStorageSync");
