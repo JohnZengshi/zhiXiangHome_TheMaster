@@ -412,7 +412,7 @@
             .left {
               width: 100rpx;
               height: 100%;
-              background: rgba(245, 208, 133, 1);
+              background: @baseColor;
 
               >img {
                 margin-top: 48rpx;
@@ -432,7 +432,7 @@
 
               >.type {
                 font-size: 32rpx;
-                font-family: PingFangSC-Semibold;
+                font-family: @fontFamily;
                 font-weight: 600;
                 color: rgba(77, 61, 51, 1);
               }
@@ -471,7 +471,7 @@
                     background: rgba(240, 240, 240, 1);
                     border-radius: 10rpx;
                     font-size: 20rpx;
-                    font-family: PingFangSC-Semibold;
+                    font-family: @fontFamily;
                     font-weight: 600;
                     color: rgba(197, 197, 199, 1);
                     transform: translateY(-34rpx)
@@ -510,7 +510,7 @@
                   color: rgba(77, 61, 51, 1);
 
                   &.active {
-                    background: rgba(245, 208, 133, 1);
+                    background: @baseColor;
                     box-shadow: 0rpx 10rpx 12rpx 0px rgba(245, 208, 133, 0.69);
                     color: rgba(77, 61, 51, 1);
                   }
@@ -530,7 +530,7 @@
                 >span {
                   margin-top: 14rpx;
                   font-size: 20rpx;
-                  font-family: PingFangSC-Semibold;
+                  font-family: @fontFamily;
                   font-weight: 600;
                   color: rgba(197, 197, 199, 1);
                 }

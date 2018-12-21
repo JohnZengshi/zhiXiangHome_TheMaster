@@ -98,7 +98,7 @@
     >span {
       &:first-of-type {
         font-size: 64rpx;
-        font-family: PingFangSC-Semibold;
+        font-family: @fontFamily;
         font-weight: 600;
         color: rgba(77, 61, 51, 1);
         margin-top: 78rpx;

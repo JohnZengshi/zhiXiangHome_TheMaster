@@ -96,7 +96,7 @@
         color: #4D3D33;
         line-height: 48rpx;
         margin-bottom: 46rpx;
-        font-family: PingFangSC-Semibold;
+        font-family: @fontFamily;
         font-weight: 600;
       }
     }

@@ -82,7 +82,7 @@
                 width: 6rpx;
                 height: 50rpx;
                 margin-right: 16rpx;
-                background: rgba(245, 208, 133, 1);
+                background: @baseColor;
               }
             }
 

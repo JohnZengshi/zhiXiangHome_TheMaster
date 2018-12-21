@@ -7,7 +7,7 @@
   .indexPage {
     width: 100%;
     height: 100%;
-    background: rgba(245, 208, 133, 1);
+    background: @baseColor;
 
     >img {
       width: 184rpx;

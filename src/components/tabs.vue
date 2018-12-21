@@ -71,7 +71,7 @@
       display: inline-block;
       transition: all 0.2s;
       height: 5rpx;
-      background: rgba(245, 208, 133, 1);
+      background: @baseColor;
     }
   }
 
