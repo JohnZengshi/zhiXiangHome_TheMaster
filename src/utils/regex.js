@@ -54,7 +54,7 @@ const RegExpr = {
    * @param str
    * @returns {boolean}
    */
- isNumber: str => {
+  isNumber: str => {
     var regPos = /^\d+(\.\d+)?$/; //非负浮点数
     var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
     if (regPos.test(str) || regNeg.test(str)) {
@@ -62,6 +62,11 @@ const RegExpr = {
     } else {
       return false;
     }
+  },
+
+  // 校验只包含中文字母数字以及下划线
+  checkUserName: str =>{
+    return /^[\u4e00-\u9fa5_a-zA-Z0-9]+$/.test(str)
   }
 }
 

@@ -72,7 +72,7 @@
     .userVia {
       width: 750rpx;
       height: 412rpx;
-      background-color: #F5D085;
+      background-color: rgba(245,208,133,1);
 
       .via {
         width: 262rpx;
