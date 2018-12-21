@@ -62,7 +62,7 @@
             console.log("待审核")
           } else if (check_status == 1) {
             console.log("跳转到首页")
-            switchTab("/pages/mine/main");
+            switchTab("/pages/home/main");
           } else if (check_status == -1 || check_status == -3) { //审核中
             this.auditIng = true;
           } else if (check_status == -2 || check_status == -4) { //审核失败
