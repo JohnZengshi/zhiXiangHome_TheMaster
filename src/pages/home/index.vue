@@ -6,69 +6,73 @@
     itemWidth="150"
     @switchTab="switchTab">
     </Tabs>
-    <swiper
-      class="swiperContent"
-      @change="swiperChange"
-      :current="currentSwiperIndex">
-      <!-- <div class="loadingBox"> -->
-        <!-- <Loading v-if="true"></Loading> -->
-      <!-- </div> -->
-      <swiper-item
-        class="swiperItemContent"
-        :key="index"
-        v-for="(item,index) in swiperDataList">
-          <!-- <Loading 
-            v-if="(item.dataList.length == 0 && item.updataTag)"
-            :isLoading="item.dataList.length == 0">
-            </Loading> -->
-          <block v-if="item.dataList.length == 0">
-            <NoData></NoData>
-          </block>
-          <block v-else>
-            <ul>
-              <li 
-                :key="i"
-                v-for="(data,i) in item.dataList">
-                    <div class="card display_flex">
-                      <div class="left display_flex flex-direction_column align-items_center">
-                        <block v-if="data.type == 1">
-                          <img src="/static/images/homePage/install-icon.png" alt="">
-                          <span class="line"></span>
-                          <span class="type">安装</span>
-                        </block>
-                        <block v-else-if="data.type == 2">
-                          <img src="/static/images/homePage/service-icon.png" alt="">
-                          <span class="line"></span>
-                          <span class="type">维修</span>
-                        </block>
-                      </div>
-                      <div class="rigth display_flex flex-direction_column">
-                        <div @click="navigatoDetail(data.order)" class="detail display_flex flex-direction_column">
-                          <span class="titleName">
-                            <span class="name">{{data.titleName}}</span>
-                            <span class="type">{{data.status_txt}}</span>
-                          </span>
-                          <span class="order">单号：{{data.order}}</span>
-                          <span class="appointment">预约时间：{{data.appointment}}</span>
-                          <span class="address">地址：{{data.address}}</span>
-                        </div>
-                        <div @click="callPhone(data.phone)" class="callPhone display_flex flex-direction_column align-items_center" v-if="item.id > 0">
-                          <img src="/static/images/homePage/phone-icon.png" alt="">
-                          <span>顾客</span>
-                        </div>
-                        <div class="btn">
-                          <button 
-                            @click="clickBtn(btn,data)" 
-                            :class="{active : btn.active}" 
-                            :key="b" v-for="(btn,b) in data.btnList">{{btn.text}}</button>
-                        </div>
-                      </div>
-                    </div>
-              </li>
-            </ul>
-          </block>
-      </swiper-item>
-    </swiper>
+        <swiper
+          class="swiperContent"
+          @change="swiperChange"
+          :current="currentSwiperIndex">
+          <!-- <div class="loadingBox"> -->
+            <!-- <Loading v-if="true"></Loading> -->
+          <!-- </div> -->
+          <swiper-item
+            class="swiperItemContent"
+            :key="index"
+            v-for="(item,index) in swiperDataList">
+              <!-- <Loading 
+                v-if="(item.dataList.length == 0 && item.updataTag)"
+                :isLoading="item.dataList.length == 0">
+                </Loading> -->
+              <block v-if="item.dataList.length == 0">
+                <NoData></NoData>
+              </block>
+              <block v-else>
+                <loadingBox>
+                    <ul slot="loading">
+                      123
+                      <li 
+                        :key="i"
+                        v-for="(data,i) in item.dataList">
+                            <div class="card display_flex">
+                              <div class="left display_flex flex-direction_column align-items_center">
+                                <block v-if="data.type == 1">
+                                  <img src="/static/images/homePage/install-icon.png" alt="">
+                                  <span class="line"></span>
+                                  <span class="type">安装</span>
+                                </block>
+                                <block v-else-if="data.type == 2">
+                                  <img src="/static/images/homePage/service-icon.png" alt="">
+                                  <span class="line"></span>
+                                  <span class="type">维修</span>
+                                </block>
+                              </div>
+                              <div class="rigth display_flex flex-direction_column">
+                                <div @click="navigatoDetail(data.order)" class="detail display_flex flex-direction_column">
+                                  <span class="titleName">
+                                    <span class="name">{{data.titleName}}</span>
+                                    <span class="type">{{data.status_txt}}</span>
+                                  </span>
+                                  <span class="order">单号：{{data.order}}</span>
+                                  <span class="appointment">预约时间：{{data.appointment}}</span>
+                                  <span class="address">地址：{{data.address}}</span>
+                                </div>
+                                <div @click="callPhone(data.phone)" class="callPhone display_flex flex-direction_column align-items_center" v-if="item.id > 0">
+                                  <img src="/static/images/homePage/phone-icon.png" alt="">
+                                  <span>顾客</span>
+                                </div>
+                                <div class="btn">
+                                  <button 
+                                    @click="clickBtn(btn,data)" 
+                                    :class="{active : btn.active}" 
+                                    :key="b" v-for="(btn,b) in data.btnList">{{btn.text}}</button>
+                                </div>
+                              </div>
+                            </div>
+                      </li>
+                    </ul>
+                </loadingBox>
+              </block>
+          </swiper-item>
+        </swiper>
+    
     <Popup 
     v-if="showPopup"
     :popType="popType"
@@ -83,6 +87,7 @@
   import Popup from "@/components/popup.vue";
   import NoData from "@/components/noData.vue";
   import Loading from "@/components/loading.vue";
+  import loadingBox from "@/components/loadingBox.vue";
   import {showModal,toast,navigateTo,makePhoneCall} from "@/utils/wxapi";
   import {
     tabsList, //tabs栏数据
@@ -101,7 +106,8 @@
       Tabs,
       Popup,
       NoData,
-      Loading
+      Loading,
+      loadingBox
     },
     data() {
       return {
