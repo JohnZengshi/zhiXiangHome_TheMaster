@@ -352,7 +352,7 @@
           } else {
             this.swiperDataList[this.currentSwiperIndex].dataList = await this.getWorkOrderList();
           }
-          this.swiperDataList[this.currentSwiperIndex].updataTag = false; //单个页面默认滑动只刷新一次
+          this.swiperDataList[this.currentSwiperIndex].updataTag = true; //单个页面默认滑动只刷新一次
           return true;
         })()
       },
