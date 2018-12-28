@@ -10,7 +10,8 @@
   import {
     authorized,
     getThirdOpenid,
-    getUserProfile
+    getUserProfile,
+    getStoreDetail
   } from "@/network/api";
   import {
     UserInfoUpdata
@@ -27,6 +28,8 @@
         return {
           third_type: "wechat_applet",
           third_openid: this.globalData.openId,
+          appid: this.globalData.appid ,
+          user_type: "installer",
           // nickname: "",
           // avatar: "",
           // gender: "",
@@ -67,15 +70,31 @@
             console.log("是工程师,手机已绑定");
           }
         })()
-      }
+      },
+      byQrcode(option) { //是否是扫码进入的小程序
+        let store_no = option.query.store_no;
+        if(store_no){
+          ;(async()=>{
+            let getStoreDetailRES = await getStoreDetail({store_no});
+            if(getStoreDetailRES.errCode == 0){
+              this.globalData.serverStoreInfo = getStoreDetailRES.detail;
+            }else{
+              toast(getStoreDetailRES.errMsg);
+            }
+          })()
+        }else{
+          return;
+        }
+      },
     },
-    onLaunch() {;
+    onLaunch(option) {;
       (async () => {
         let loginRES = await login();
         this.code = loginRES.code;
         let getThirdOpenidRES = await getThirdOpenid(this.getThirdOpenidParams) //获取openId
         if (getThirdOpenidRES.errCode == 0) {
           this.globalData.openId = getThirdOpenidRES.third_openid; //全局保存openId
+          this.globalData.appid = getThirdOpenidRES.appid; //全局保存appid
           console.log("已获取openid");
           let authorizedRES = await authorized(this.authorizedParams); //登录
           console.log(authorizedRES)
@@ -108,7 +127,9 @@
         }
 
         console.log(this.globalData);
-      })()
+      })();
+
+      this.byQrcode(option);
     },
     created() {
       // console.log("app created and cache logs by setStorageSync");
