@@ -28,6 +28,8 @@
         return {
           third_type: "wechat_applet",
           third_openid: this.globalData.openId,
+          appid: this.globalData.appid ,
+          user_type: "installer",
           // nickname: "",
           // avatar: "",
           // gender: "",
@@ -92,6 +94,7 @@
         let getThirdOpenidRES = await getThirdOpenid(this.getThirdOpenidParams) //获取openId
         if (getThirdOpenidRES.errCode == 0) {
           this.globalData.openId = getThirdOpenidRES.third_openid; //全局保存openId
+          this.globalData.appid = getThirdOpenidRES.appid; //全局保存appid
           console.log("已获取openid");
           let authorizedRES = await authorized(this.authorizedParams); //登录
           console.log(authorizedRES)
