@@ -1,5 +1,12 @@
 <template>
   <div class="completeInformationPage display_flex flex-direction_column align-items_center">
+    <div v-if="serviceProviderName != ''" class="storeName display_flex justify-content_flex-justify align-items_center">
+        <div class="display_flex align-items_center">
+            <span class="line"></span>
+            <span class="title">服务商名称</span>
+        </div>
+        <input v-model="serviceProviderName" type="text" placeholder="请输入服务商名称" placeholder-class="placeholderClass001">
+    </div>
     <div class="number display_flex justify-content_flex-justify align-items_center">
         <div class="display_flex align-items_center">
             <span class="line"></span>
@@ -74,6 +81,7 @@
     export default {
       data() {
         return {
+          serviceProviderName: "", //服务商名称
           serviceProviderNumber: "", //服务商编号
           userName: "", //姓名
           ICP: "", //公安机关备案号
@@ -169,28 +177,41 @@
               console.log(getInstallerDetailRES);
               if(getInstallerDetailRES.errCode == 0){
                   let detail = getInstallerDetailRES.detail;
-                  this.serviceProviderNumber = detail.store_no;
-                  this.userName = detail.realname;
-                  this.ICP = detail.security_record_num;
-                  this.idCardList[0].src = detail.idcard_font_img;
-                  this.idCardList[1].src = detail.idcard_back_img;
+                  
+                  //信息回填
+                  this.serviceProviderNumber = detail.store_no ? detail.store_no : "";
+                  this.userName = detail.realname ? detail.realname : "";
+                  this.ICP = detail.security_record_num ? detail.security_record_num : "";
+                  this.idCardList[0].src = detail.idcard_font_img ? detail.idcard_font_img : "";
+                  this.idCardList[1].src = detail.idcard_back_img ? detail.idcard_back_img : "";
+
+                  if (this.globalData.serverStoreInfo) { //通过扫码进入获取到有服务商信息
+                    this.serviceProviderNumber = this.globalData.serverStoreInfo.store_no;
+                    this.serviceProviderName = this.globalData.serverStoreInfo.name;
+                  }
+              }else{
+                  toast(getInstallerDetailRES.errMsg)
               }
           })()
+
+          
       }
     }
 </script>
 <style lang="less" scoped>
 .completeInformationPage{
-    .number{
+    >div {
+      &:first-of-type {
         margin-top: 36rpx;
+      }
     }
-    .number,.name,.icp{
+    .storeName,.number,.name,.icp{
         width:690rpx;
         height:94rpx;
         background:rgba(216,216,216,0);
         border-bottom: 1rpx solid rgba(228,228,228,0.5);;
     }
-    .number,.name,.icp,.iCard{
+    .storeName,.number,.name,.icp,.iCard{
         >div{
             &:first-of-type{
                 >.line{

@@ -27,6 +27,11 @@ const getThirdOpenid = params => { //获取Openid
   return postFetch('', Object.assign(params, publicParams), true);
 };
 
+const getStoreDetail = params => { //获取商户详情
+  params.method = 'getStoreDetail';
+  return postFetch('', Object.assign(params, publicParams), true);
+}
+
 const authorized = params => { //第三方账号授权登录
   params.method = 'authorized';
   return postFetch('', Object.assign(params, publicParams), true);
@@ -112,6 +117,7 @@ export {
   checkSmsCode,
   getUserProfile,
   getThirdOpenid,
+  getStoreDetail,
   applyBeInstaller,
   getInstallerDetail,
   uploadImage,
