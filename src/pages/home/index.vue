@@ -300,14 +300,15 @@
         }, 2000)
       },
       getWorkOrderList() {; //获取工单数据
+        let currentIndex = this.currentSwiperIndex;
         return (async () => {
           let getWorkOrderListRES = await getWorkOrderList(this.getWorkOrderListParams);
           console.log(getWorkOrderListRES)
           if(getWorkOrderListRES.errCode == 0){
             console.log(getWorkOrderListRES.list)
-            let btnList = tabsList[this.currentSwiperIndex].btnList
+            let btnList = tabsList[currentIndex].btnList
             let list = getWorkOrderListRES.list.map((val)=>{
-              if (this.currentSwiperIndex == '3') { //已完成的工单按钮判断
+              if (currentIndex == '3') { //已完成的工单按钮判断
                 btnList = btnList.filter((v) => {
                   if (val.has_assess == 1) {
                     return v.id == "6" //已评价
@@ -332,27 +333,28 @@
               
             })
             return list;
-            // this.swiperDataList[this.currentSwiperIndex].dataList = list;
+            // this.swiperDataList[currentIndex].dataList = list;
           }else{
             return []
           }
         })()
       },
       updataWorkOrderList() { //刷新工单数据
+        let currentIndex = this.currentSwiperIndex;
         return (async () => {
-          if (Array.isArray(tabsList[this.currentSwiperIndex].status)) { //有多个状态
-            this.swiperDataList[this.currentSwiperIndex].dataList = [];
-            let statusList = tabsList[this.currentSwiperIndex].status;
+          if (Array.isArray(tabsList[currentIndex].status)) { //有多个状态
+            this.swiperDataList[currentIndex].dataList = [];
+            let statusList = tabsList[currentIndex].status;
             statusList.forEach(async (val) => {
-              tabsList[this.currentSwiperIndex].status = val;
+              tabsList[currentIndex].status = val;
               let List = await this.getWorkOrderList()
-              this.swiperDataList[this.currentSwiperIndex].dataList = this.swiperDataList[this.currentSwiperIndex].dataList.concat(List);
+              this.swiperDataList[currentIndex].dataList = this.swiperDataList[currentIndex].dataList.concat(List);
             });
-            tabsList[this.currentSwiperIndex].status = statusList;
+            tabsList[currentIndex].status = statusList;
           } else {
-            this.swiperDataList[this.currentSwiperIndex].dataList = await this.getWorkOrderList();
+            this.swiperDataList[currentIndex].dataList = await this.getWorkOrderList();
           }
-          this.swiperDataList[this.currentSwiperIndex].updataTag = true; //单个页面默认滑动只刷新一次
+          this.swiperDataList[currentIndex].updataTag = true; //单个页面默认滑动只刷新一次
           return true;
         })()
       },
