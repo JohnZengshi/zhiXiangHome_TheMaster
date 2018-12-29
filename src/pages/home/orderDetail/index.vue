@@ -37,7 +37,7 @@
               <li 
                 :key="index"
                 v-for="(item,index) in orderData.instructions.pic">
-                <img :src="item" alt="">
+                <img :src="item" @error="imgLoadFail">
               </li>
             </ul>
           </div>
@@ -70,7 +70,7 @@
             <span class="des title">用户评价：</span>
             <span class="des">{{orderData.evaluation.des}}</span>
           </div>
-          <div class="evaluationBox display_flex flex-direction_column">
+          <div v-if="orderData.evaluation.additionalDes != ''" class="evaluationBox display_flex flex-direction_column">
             <span class="des title">追加评价：</span>
             <span class="des">{{orderData.evaluation.additionalDes}}</span>
           </div>
@@ -150,7 +150,7 @@
                 }
               }),
               des: assess_list[0].msg,
-              additionalDes: assess_list[1].msg,
+              additionalDes: assess_list.length < 2 ? "" : assess_list[1].msg,
             }
           }
         }else{
@@ -167,6 +167,9 @@
     methods:{
       back(){
         
+      },
+      imgLoadFail(e){ //图片加载失败
+        console.log('图片加载失败', e.mp)
       }
     },
     onLoad(option) {
