@@ -236,6 +236,19 @@
           })()
         }
       },
+      filterBtn(btnList, val, currentIndex) { // 工单按钮过滤
+        if (currentIndex == '3') { //已完成的工单按钮判断
+          return btnList.filter((v) => {
+            if (val.first_assess == 1) {
+              return v.id == "6" //已评价
+            } else {
+              return v.id == "4" //待评价
+            }
+          })
+        } else {
+          return btnList
+        }
+      },
       hidePopup() { //隐藏弹窗
         this.showPopup = false;
         // wx.showTabBar({})
@@ -306,17 +319,10 @@
           console.log(getWorkOrderListRES)
           if(getWorkOrderListRES.errCode == 0){
             console.log(getWorkOrderListRES.list)
-            let btnList = tabsList[currentIndex].btnList
             let list = getWorkOrderListRES.list.map((val)=>{
-              if (currentIndex == '3') { //已完成的工单按钮判断
-                btnList = btnList.filter((v) => {
-                  if (val.has_assess == 1) {
-                    return v.id == "6" //已评价
-                  }else{
-                    return v.id == "4" //待评价
-                  }
-                })
-              }
+              let btnList = tabsList[currentIndex].btnList;
+              btnList = this.filterBtn(btnList, val, currentIndex);
+              
               let item = {
                 titleName: val.sku_name,
                 type: val.work_order_type,
