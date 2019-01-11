@@ -92,7 +92,11 @@
         }
       },
     },
-    onLoad(option) {;
+    onLoad(option) {},
+    created() {
+      // console.log("app created and cache logs by setStorageSync");
+    },
+    onShow() {
       (async () => {
         let loginRES = await login();
         this.code = loginRES.code;
@@ -134,20 +138,7 @@
         console.log(this.globalData);
       })();
 
-      this.byQrcode(option);
-    },
-    created() {
-      // console.log("app created and cache logs by setStorageSync");
-    },
-    onShow() {
-      // console.log("app onshow")
-      // ;
-      // (async () => {
-      //   if (this.restartBindPhone) {
-      //     await toast('未绑定手机', 500);
-      //     redirectTo("/pages/login/register/main");
-      //   }
-      // })()
+      this.byQrcode(this.$root.$mp.query);
     },
     onHide() {
       // if(!this.globalData.userInfo){
