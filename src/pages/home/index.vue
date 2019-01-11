@@ -205,7 +205,7 @@
         } else if (id == '2') { //签到
           ;
           (async () => {
-            let res = await showModal("签到", "确定签到吗？", true);
+            let res = await showModal("签到", "签到后，该工单将无法再取消，确定要签到吗？", true);
             if (res == 'ok') {
               let signWorkOrderRES = await signWorkOrder(this.signWorkOrderParams);
               if (signWorkOrderRES.errCode == 0) {
