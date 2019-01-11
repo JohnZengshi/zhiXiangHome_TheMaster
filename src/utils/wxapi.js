@@ -469,6 +469,17 @@ const makePhoneCall = (phoneNumber) => new Promise((resolve,reject) => {
     }
   })
 })
+
+const getScrollOffset = (nodeName) => new Promise((resolve, reject) => {
+  wx.createSelectorQuery(nodeName).selectViewport().scrollOffset(function (res) {
+    // res.id // 节点的ID
+    // res.dataset // 节点的dataset
+    // res.scrollLeft // 节点的水平滚动位置
+    // res.scrollTop // 节点的竖直滚动位置
+    resolve(res);
+  }).exec()
+})
+
 export {
   getStorage,
   setStorage,
@@ -501,5 +512,6 @@ export {
   actionSheet,
   saveImage,
   checkSession,
-  makePhoneCall
+  makePhoneCall,
+  getScrollOffset
 }

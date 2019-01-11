@@ -1,8 +1,6 @@
 <template>
   <!-- 上拉下拉加载组件 -->
-  <div class="loadingBox">
-     <slot name="loading"></slot> 
-  </div>
+  <div class="loadingBox"></div>
 </template>
 <script>
   export default {
