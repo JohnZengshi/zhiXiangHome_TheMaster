@@ -182,7 +182,7 @@
             if (res == 'ok') {
               let receiveWorkOrderRES = await receiveWorkOrder(this.receiveWorkOrderParams)
               if (receiveWorkOrderRES.errCode == 0) {
-                await toast(receiveWorkOrderRES.msg, 500);
+                await toast(receiveWorkOrderRES.msg, 2000);
                 await this.updataWorkOrderList();
                 await this.autoSwiperPage();
               }
