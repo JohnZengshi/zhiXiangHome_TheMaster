@@ -22,6 +22,12 @@
           return "radio"
         }
       },
+      defaultSelect: {
+        type: Boolean,
+        default: () => {
+          return false
+        }
+      }
     },
     data() {
       return {
@@ -35,7 +41,10 @@
           this.$emit("selectBack", this.isSelect)
         }
       }
-    }
+    },
+    mounted() {
+      this.isSelect = this.defaultSelect;
+    },
   }
 </script>
 <style lang="less" scoped>
