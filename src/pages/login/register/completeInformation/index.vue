@@ -111,6 +111,7 @@
               openid: this.globalData.openId,
               method: 'uploadImage',
               type: "idcard",
+              timestamp: Date.parse(new Date()) / 1000,
               ...publicParams,
             };
             params.sign = getSign(params);

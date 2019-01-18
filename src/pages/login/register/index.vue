@@ -20,6 +20,7 @@
         class="SelectBox display_flex align-items_center">
         <SelectBox 
         model="oneSelect"
+        :defaultSelect="true"
         @selectBack="selectBack"></SelectBox>
         <span>同意</span>
         <span class="agreement">
@@ -46,7 +47,7 @@
         phone: "", //输入的手机号
         code: "", //输入的验证码
         password: "", //输入的密码
-        isReadeAgreement: false, //是否阅读了用户协议
+        isReadeAgreement: true, //是否阅读了用户协议
       }
     },
     components:{

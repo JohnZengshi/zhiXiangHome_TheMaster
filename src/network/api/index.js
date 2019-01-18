@@ -109,6 +109,11 @@ const finishWorkOrder = params => { //工程师确认完成操作
   params.method = 'finishWorkOrder';
   return postFetch('', Object.assign(params, publicParams), true);
 }
+
+const getWebDetail = params => { //获取官网信息
+  params.method = 'getWebDetail';
+  return postFetch('', Object.assign(params, publicParams), true);
+}
 export {
   authorized,
   bindPhone,
@@ -126,5 +131,6 @@ export {
   receiveWorkOrder,
   refuseWorkOrder,
   signWorkOrder,
-  finishWorkOrder
+  finishWorkOrder,
+  getWebDetail
 }
